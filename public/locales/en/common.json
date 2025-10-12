@@ -1,0 +1,108 @@
+{
+  "common": {
+    "home": "Home",
+    "blog": "Blog",
+    "courses": "Courses",
+    "shop": "Shop",
+    "community": "Community",
+    "about": "About",
+    "contact": "Contact",
+    "readMore": "Read More",
+    "learnMore": "Learn More",
+    "getStarted": "Get Started",
+    "joinNow": "Join Now",
+    "buyNow": "Buy Now",
+    "subscribe": "Subscribe",
+    "language": "Language",
+    "english": "English",
+    "persian": "Persian"
+  },
+  "home": {
+    "hero": {
+      "title": "Welcome to Margaret Café",
+      "subtitle": "A café in Iran, a community worldwide",
+      "description": "Experience the perfect blend of authentic Persian hospitality and global café culture. From our cozy corner in Iran to your home anywhere in the world.",
+      "cta": "Explore Our World"
+    },
+    "features": {
+      "title": "What We Offer",
+      "subtitle": "More than just coffee and tea",
+      "items": [
+        {
+          "title": "Authentic Recipes",
+          "description": "Traditional Persian tea blends and coffee recipes passed down through generations.",
+          "icon": "coffee"
+        },
+        {
+          "title": "Online Learning",
+          "description": "Master the art of brewing with our comprehensive barista courses.",
+          "icon": "book-open"
+        },
+        {
+          "title": "Global Community",
+          "description": "Connect with coffee lovers and café enthusiasts from around the world.",
+          "icon": "users"
+        },
+        {
+          "title": "Premium Products",
+          "description": "Carefully curated coffee beans, teas, and café accessories.",
+          "icon": "shopping-bag"
+        }
+      ]
+    },
+    "stats": {
+      "title": "Our Impact",
+      "subtitle": "Growing together, one cup at a time",
+      "items": [
+        { "number": "10K+", "label": "Happy Customers" },
+        { "number": "50+", "label": "Countries Reached" },
+        { "number": "100+", "label": "Recipes Shared" },
+        { "number": "5K+", "label": "Students Taught" }
+      ]
+    }
+  },
+  "blog": {
+    "title": "Blog & Academy",
+    "subtitle": "Discover the art of coffee, tea, and café culture",
+    "categories": {
+      "coffee": "Coffee",
+      "tea": "Tea",
+      "recipes": "Recipes",
+      "culture": "Culture",
+      "lifestyle": "Lifestyle"
+    },
+    "readTime": "min read",
+    "publishedOn": "Published on",
+    "author": "By"
+  },
+  "shop": {
+    "title": "Our Shop",
+    "subtitle": "Premium products for coffee and tea enthusiasts",
+    "categories": {
+      "digital": "Digital Products",
+      "physical": "Physical Products",
+      "courses": "Online Courses"
+    }
+  },
+  "courses": {
+    "title": "Online Courses",
+    "subtitle": "Master the art of coffee and tea brewing",
+    "levels": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    }
+  },
+  "community": {
+    "title": "Community Hub",
+    "subtitle": "Connect, learn, and grow with fellow café enthusiasts"
+  },
+  "about": {
+    "title": "About Margaret Café",
+    "subtitle": "Our story, mission, and values"
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "We'd love to hear from you"
+  }
+}
