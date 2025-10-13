@@ -12,6 +12,7 @@ const AdminPanel: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [logoUrl, setLogoUrl] = useState('');
   const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<any>(null);
   const [newProduct, setNewProduct] = useState({
     name: '',
     nameFa: '',
@@ -115,6 +116,102 @@ const AdminPanel: React.FC = () => {
     } catch (error) {
       console.error('Error adding product:', error);
       alert('خطا در اضافه کردن محصول');
+    }
+  };
+
+  const handleEditProduct = (product: any) => {
+    setEditingProduct(product);
+    setNewProduct({
+      name: product.name || '',
+      nameFa: product.nameFa || '',
+      description: product.description || '',
+      descriptionFa: product.descriptionFa || '',
+      price: product.price?.toString() || '',
+      category: product.category || '',
+      stock: product.stock?.toString() || '',
+      image: product.image || '',
+      featured: product.featured || false
+    });
+    setShowAddProductModal(true);
+  };
+
+  const handleUpdateProduct = async () => {
+    try {
+      const response = await fetch('/api/admin/products', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: editingProduct.id,
+          name: newProduct.name,
+          nameFa: newProduct.nameFa,
+          description: newProduct.description,
+          descriptionFa: newProduct.descriptionFa,
+          price: parseFloat(newProduct.price),
+          category: newProduct.category,
+          stock: parseInt(newProduct.stock),
+          image: newProduct.image,
+          featured: newProduct.featured
+        }),
+      });
+
+      if (response.ok) {
+        alert('محصول با موفقیت به‌روزرسانی شد!');
+        setShowAddProductModal(false);
+        setEditingProduct(null);
+        setNewProduct({
+          name: '',
+          nameFa: '',
+          description: '',
+          descriptionFa: '',
+          price: '',
+          category: '',
+          stock: '',
+          image: '',
+          featured: false
+        });
+        // Refresh products list
+        const productsResponse = await fetch('/api/admin/products');
+        if (productsResponse.ok) {
+          const productsData = await productsResponse.json();
+          setProducts(productsData);
+        }
+      } else {
+        const error = await response.json();
+        alert(`خطا در به‌روزرسانی محصول: ${error.message}`);
+      }
+    } catch (error) {
+      console.error('Error updating product:', error);
+      alert('خطا در به‌روزرسانی محصول');
+    }
+  };
+
+  const handleDeleteProduct = async (productId: string) => {
+    if (!confirm('آیا مطمئن هستید که می‌خواهید این محصول را حذف کنید؟')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/products?id=${productId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert('محصول با موفقیت حذف شد!');
+        // Refresh products list
+        const productsResponse = await fetch('/api/admin/products');
+        if (productsResponse.ok) {
+          const productsData = await productsResponse.json();
+          setProducts(productsData);
+        }
+      } else {
+        const error = await response.json();
+        alert(`خطا در حذف محصول: ${error.message}`);
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('خطا در حذف محصول');
     }
   };
 
@@ -223,6 +320,7 @@ const AdminPanel: React.FC = () => {
                       <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">دسته‌بندی</th>
                       <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">موجودی</th>
                       <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ویژه</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">عملیات</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -273,6 +371,22 @@ const AdminPanel: React.FC = () => {
                             </span>
                           )}
                         </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => handleEditProduct(product)}
+                              className="text-blue-600 hover:text-blue-900 font-medium"
+                            >
+                              ویرایش
+                            </button>
+                            <button
+                              onClick={() => handleDeleteProduct(product.id)}
+                              className="text-red-600 hover:text-red-900 font-medium"
+                            >
+                              حذف
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -285,9 +399,25 @@ const AdminPanel: React.FC = () => {
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                 <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-gray-900">افزودن محصول جدید</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">
+                      {editingProduct ? 'ویرایش محصول' : 'افزودن محصول جدید'}
+                    </h2>
                     <button
-                      onClick={() => setShowAddProductModal(false)}
+                      onClick={() => {
+                        setShowAddProductModal(false);
+                        setEditingProduct(null);
+                        setNewProduct({
+                          name: '',
+                          nameFa: '',
+                          description: '',
+                          descriptionFa: '',
+                          price: '',
+                          category: '',
+                          stock: '',
+                          image: '',
+                          featured: false
+                        });
+                      }}
                       className="text-gray-400 hover:text-gray-600"
                     >
                       <X className="w-6 h-6" />
@@ -408,16 +538,30 @@ const AdminPanel: React.FC = () => {
 
                   <div className="flex justify-end space-x-4 mt-6">
                     <button
-                      onClick={() => setShowAddProductModal(false)}
+                      onClick={() => {
+                        setShowAddProductModal(false);
+                        setEditingProduct(null);
+                        setNewProduct({
+                          name: '',
+                          nameFa: '',
+                          description: '',
+                          descriptionFa: '',
+                          price: '',
+                          category: '',
+                          stock: '',
+                          image: '',
+                          featured: false
+                        });
+                      }}
                       className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
                     >
                       انصراف
                     </button>
                     <button
-                      onClick={handleAddProduct}
+                      onClick={editingProduct ? handleUpdateProduct : handleAddProduct}
                       className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                     >
-                      افزودن محصول
+                      {editingProduct ? 'به‌روزرسانی محصول' : 'افزودن محصول'}
                     </button>
                   </div>
                 </div>

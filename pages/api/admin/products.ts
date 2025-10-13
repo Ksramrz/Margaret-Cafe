@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     case 'POST':
       try {
-        const { name, nameFa, description, descriptionFa, price, category, type, image, stock } = req.body;
+        const { name, nameFa, description, descriptionFa, price, category, type, image, stock, featured } = req.body;
         
         const product = await prisma.product.create({
           data: {
@@ -33,14 +33,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             descriptionFa,
             price: parseInt(price),
             category,
-            type,
+            type: type || 'PHYSICAL',
             image,
             stock: parseInt(stock),
+            featured: featured || false,
           },
         });
         
         return res.status(201).json(product);
       } catch (error) {
+        console.error('Error creating product:', error);
         return res.status(500).json({ message: 'Error creating product' });
       }
 
