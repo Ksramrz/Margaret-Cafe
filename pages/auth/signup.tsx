@@ -21,12 +21,34 @@ const SignUp: React.FC = () => {
   const [smsSent, setSmsSent] = useState(false);
   const [smsCode, setSmsCode] = useState('');
   const [isVerifyingSms, setIsVerifyingSms] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [resendAttempts, setResendAttempts] = useState(0);
   
   const router = useRouter();
 
-  const sendSmsCode = async () => {
+  // Cooldown timer effect
+  React.useEffect(() => {
+    if (resendCooldown > 0) {
+      const timer = setTimeout(() => {
+        setResendCooldown(resendCooldown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendCooldown]);
+
+  const sendSmsCode = async (isResend = false) => {
     if (!phone) {
       setError('لطفاً شماره تلفن را وارد کنید');
+      return;
+    }
+
+    if (resendCooldown > 0) {
+      setError(`لطفاً ${resendCooldown} ثانیه صبر کنید`);
+      return;
+    }
+
+    if (isResend && resendAttempts >= 3) {
+      setError('حداکثر 3 بار امکان ارسال مجدد وجود دارد');
       return;
     }
 
@@ -46,7 +68,13 @@ const SignUp: React.FC = () => {
 
       if (response.ok) {
         setSmsSent(true);
+        setSmsCode(''); // Clear previous code
         setError('');
+        
+        if (isResend) {
+          setResendAttempts(prev => prev + 1);
+          setResendCooldown(60); // 60 second cooldown
+        }
       } else {
         setError(data.message || 'خطا در ارسال کد تأیید');
       }
@@ -273,15 +301,29 @@ const SignUp: React.FC = () => {
                       />
                       <button
                         type="button"
-                        onClick={sendSmsCode}
-                        disabled={isVerifyingSms}
-                        className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50"
+                        onClick={() => sendSmsCode(true)}
+                        disabled={isVerifyingSms || resendCooldown > 0 || resendAttempts >= 3}
+                        className={`px-4 py-2 rounded-lg transition-colors disabled:opacity-50 ${
+                          resendCooldown > 0 || resendAttempts >= 3
+                            ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                            : 'bg-gray-500 text-white hover:bg-gray-600'
+                        }`}
                       >
-                        ارسال مجدد
+                        {resendCooldown > 0 
+                          ? `ارسال مجدد (${resendCooldown})`
+                          : resendAttempts >= 3
+                          ? 'حداکثر تلاش'
+                          : 'ارسال مجدد'
+                        }
                       </button>
                     </div>
                     <p className="text-sm text-gray-500 mt-1">
                       کد تأیید به شماره {phone} ارسال شد
+                      {resendAttempts > 0 && (
+                        <span className="text-orange-600 mr-2">
+                          (ارسال مجدد: {resendAttempts}/3)
+                        </span>
+                      )}
                     </p>
                   </div>
                 )}

@@ -16,7 +16,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const code = generateVerificationCode();
     
-    // ذخیره کد در دیتابیس
+    // حذف کدهای قبلی برای این شماره
+    await prisma.verificationCode.deleteMany({
+      where: { phone },
+    });
+    
+    // ذخیره کد جدید در دیتابیس
     await prisma.verificationCode.create({
       data: {
         phone,
