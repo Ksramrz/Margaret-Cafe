@@ -28,9 +28,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       
       // Update existing products to have featured = false
       await prisma.product.updateMany({
-        where: {
-          featured: null
-        },
         data: {
           featured: false
         }
