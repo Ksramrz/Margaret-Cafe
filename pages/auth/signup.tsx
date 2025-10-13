@@ -138,8 +138,21 @@ const SignUp: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Success - redirect to signin with success message
-        router.push('/auth/signin?message=حساب کاربری با موفقیت ایجاد شد. لطفاً وارد شوید.');
+        // Account created successfully, now auto-login
+        const loginResult = await signIn('credentials', {
+          email: authMethod === 'email' ? email : undefined,
+          phone: authMethod === 'phone' ? phone : undefined,
+          password,
+          redirect: false,
+        });
+
+        if (loginResult?.error) {
+          setError('حساب کاربری ایجاد شد اما ورود خودکار ناموفق بود. لطفاً وارد شوید.');
+          router.push('/auth/signin?message=حساب کاربری با موفقیت ایجاد شد. لطفاً وارد شوید.');
+        } else {
+          // Login successful, redirect to home
+          router.push('/?message=خوش آمدید! حساب کاربری شما با موفقیت ایجاد شد.');
+        }
       } else {
         setError(data.message || 'خطا در ایجاد حساب کاربری');
       }

@@ -67,7 +67,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(201).json({
       message: 'حساب کاربری با موفقیت ایجاد شد',
-      user,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        createdAt: user.createdAt,
+      },
+      debug: {
+        passwordHashed: true,
+        userCreated: true,
+      },
     });
   } catch (error: any) {
     console.error('Signup error:', error);

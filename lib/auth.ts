@@ -46,13 +46,19 @@ export const authOptions: NextAuthOptions = {
 
         // Verify password for users with passwords
         if ((user as any).password) {
+          console.log('Verifying password for user:', user.email || user.phone);
           const isValidPassword = await bcrypt.compare(credentials.password, (user as any).password);
+          console.log('Password verification result:', isValidPassword);
+          
           if (!isValidPassword) {
+            console.log('Invalid password for user:', user.email || user.phone);
             return null; // Invalid password
           }
         } else {
+          console.log('User has no password, checking if admin:', user.role);
           // For admin users without password, accept any password
           if (user.role !== 'ADMIN') {
+            console.log('User has no password and is not admin');
             return null; // User has no password set and is not admin
           }
         }
