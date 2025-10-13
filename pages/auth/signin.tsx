@@ -35,7 +35,8 @@ const SignIn: React.FC = () => {
         setError('Invalid credentials');
       } else {
         const session = await getSession();
-        if (session?.user?.role === 'ADMIN') {
+        const role = (session?.user as any)?.role as string | undefined;
+        if (role === 'ADMIN') {
           router.push('/admin');
         } else {
           router.push('/');
