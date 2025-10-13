@@ -25,17 +25,32 @@ export const sendVerificationCode = async (phone: string, code: string) => {
     return { disabled: true };
   }
 
-  try {
-    const result = await api.Send({
+  return new Promise((resolve, reject) => {
+    console.log(`Sending SMS to ${phone} with code ${code}`);
+    
+    api.Send({
       message: `کد تأیید شما: ${code}`,
       sender: process.env.KAVENEGAR_SENDER_NUMBER,
       receptor: phone,
+    }, (response: any, status: number) => {
+      console.log('SMS Response:', response);
+      console.log('SMS Status:', status);
+      
+      if (status === 200 && response && response.length > 0) {
+        const smsResult = response[0];
+        console.log('SMS sent successfully:', {
+          messageId: smsResult.messageid,
+          status: smsResult.status,
+          statusText: smsResult.statustext,
+          cost: smsResult.cost
+        });
+        resolve(smsResult);
+      } else {
+        console.error('SMS sending failed:', { response, status });
+        reject(new Error(`SMS failed with status ${status}`));
+      }
     });
-    return result;
-  } catch (error) {
-    console.error('SMS sending failed:', error);
-    throw error;
-  }
+  });
 };
 
 export const generateVerificationCode = () => {
