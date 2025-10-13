@@ -14,9 +14,21 @@ const SignIn: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [authMethod, setAuthMethod] = useState<'email' | 'phone'>('email');
   
   const router = useRouter();
+
+  // Check for success message from URL
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get('message');
+    if (message) {
+      setSuccessMessage(message);
+      // Clear the URL parameter
+      router.replace('/auth/signin', undefined, { shallow: true });
+    }
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -162,6 +174,12 @@ const SignIn: React.FC = () => {
                 </button>
               </div>
             </div>
+
+            {successMessage && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                <p className="text-green-800 text-sm">{successMessage}</p>
+              </div>
+            )}
 
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-3">

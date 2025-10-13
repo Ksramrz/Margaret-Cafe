@@ -45,6 +45,7 @@ model User {
   image         String?
   phone         String?   @unique
   phoneVerified DateTime?
+  password      String?   // For credentials authentication
   role          String    @default("USER") // USER or ADMIN
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

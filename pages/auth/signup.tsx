@@ -33,11 +33,29 @@ const SignUp: React.FC = () => {
     }
 
     try {
-      // For now, just redirect to signin since we don't have a signup API
-      // In a real app, you'd create the user here
-      router.push('/auth/signin?message=لطفاً با ایمیل admin@margaretcafe.com وارد شوید');
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email: authMethod === 'email' ? email : undefined,
+          phone: authMethod === 'phone' ? phone : undefined,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Success - redirect to signin with success message
+        router.push('/auth/signin?message=حساب کاربری با موفقیت ایجاد شد. لطفاً وارد شوید.');
+      } else {
+        setError(data.message || 'خطا در ایجاد حساب کاربری');
+      }
     } catch (error) {
-      setError('خطا در ایجاد حساب کاربری');
+      setError('خطا در برقراری ارتباط با سرور');
     } finally {
       setIsLoading(false);
     }

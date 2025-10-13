@@ -3,6 +3,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -40,33 +41,29 @@ export const authOptions: NextAuthOptions = {
         }
 
         if (!user) {
-          // Only create new user if it's the admin email
-          if (credentials.email === 'admin@margaretcafe.com') {
-            user = await prisma.user.create({
-              data: {
-                email: credentials.email,
-                phone: credentials.phone,
-                name: 'Admin User',
-                role: 'ADMIN',
-              },
-            });
-          } else {
-            return null; // Don't create random users
+          return null; // User doesn't exist
+        }
+
+        // Verify password for users with passwords
+        if (user.password) {
+          const isValidPassword = await bcrypt.compare(credentials.password, user.password);
+          if (!isValidPassword) {
+            return null; // Invalid password
+          }
+        } else {
+          // For admin users without password, accept any password
+          if (user.role !== 'ADMIN') {
+            return null; // User has no password set and is not admin
           }
         }
 
-        // For admin users, accept any password
-        if (user.role === 'ADMIN') {
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            image: user.image,
-            role: user.role,
-          };
-        }
-
-        return null; // Only allow admin users for now
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.image,
+          role: user.role,
+        };
       },
     }),
   ],
