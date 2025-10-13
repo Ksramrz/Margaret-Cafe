@@ -8,6 +8,7 @@ const AdminPanel: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [stats, setStats] = useState<any>(null);
   const [products, setProducts] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [newProduct, setNewProduct] = useState({
@@ -27,10 +28,11 @@ const AdminPanel: React.FC = () => {
       try {
         setLoading(true);
         
-        // Only fetch stats and products for now
-        const [statsRes, productsRes] = await Promise.all([
+        // Fetch stats, products, and users
+        const [statsRes, productsRes, usersRes] = await Promise.all([
           fetch('/api/admin/stats'),
           fetch('/api/admin/products'),
+          fetch('/api/admin/users')
         ]);
 
         if (statsRes.ok) {
@@ -41,6 +43,11 @@ const AdminPanel: React.FC = () => {
         if (productsRes.ok) {
           const productsData = await productsRes.json();
           setProducts(productsData);
+        }
+        
+        if (usersRes.ok) {
+          const usersData = await usersRes.json();
+          setUsers(usersData);
         }
       } catch (error) {
         console.error('Failed to fetch admin data:', error);
