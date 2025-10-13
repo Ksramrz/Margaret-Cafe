@@ -83,7 +83,7 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, setIsOpen }) => {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-8">
                 <Link
                   href="/auth/signin"
                   className="text-gray-700 hover:text-cafe-green transition-colors duration-200 font-medium"

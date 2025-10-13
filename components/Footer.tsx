@@ -19,8 +19,8 @@ const Footer: React.FC = () => {
     company: [
       { name: t('common.about'), href: '/about' },
       { name: t('common.contact'), href: '/contact' },
-      { name: 'Careers', href: '#' },
-      { name: 'Press', href: '#' },
+      { name: 'فرصت‌های شغلی', href: '#' },
+      { name: 'اخبار', href: '#' },
     ],
     products: [
       { name: t('common.shop'), href: '/shop' },
@@ -29,10 +29,10 @@ const Footer: React.FC = () => {
       { name: t('common.community'), href: '/community' },
     ],
     support: [
-      { name: 'Help Center', href: '#' },
-      { name: 'Shipping Info', href: '#' },
-      { name: 'Returns', href: '#' },
-      { name: 'Privacy Policy', href: '#' },
+      { name: 'مرکز راهنمایی', href: '#' },
+      { name: 'اطلاعات ارسال', href: '#' },
+      { name: 'بازگشت کالا', href: '#' },
+      { name: 'حریم خصوصی', href: '#' },
     ],
   };
 
@@ -65,7 +65,7 @@ const Footer: React.FC = () => {
 
           {/* Company Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Company</h4>
+            <h4 className="text-lg font-semibold mb-4">شرکت</h4>
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
@@ -82,7 +82,7 @@ const Footer: React.FC = () => {
 
           {/* Products Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Products</h4>
+            <h4 className="text-lg font-semibold mb-4">محصولات</h4>
             <ul className="space-y-2">
               {footerLinks.products.map((link) => (
                 <li key={link.name}>
@@ -99,7 +99,7 @@ const Footer: React.FC = () => {
 
           {/* Support Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Support</h4>
+            <h4 className="text-lg font-semibold mb-4">پشتیبانی</h4>
             <ul className="space-y-2">
               {footerLinks.support.map((link) => (
                 <li key={link.name}>
