@@ -10,6 +10,7 @@
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate deploy",
+    "db:fix": "node scripts/migrate-database.js",
     "setup:prod": "node scripts/setup-production.js"
   },
   "dependencies": {

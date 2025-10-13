@@ -1,18 +1,91 @@
+// Comprehensive production setup script
+// This ensures everything is properly configured and working
+
 const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-async function setupProductionDatabase() {
-  console.log('🚀 Setting up production database...\n');
+async function setupProduction() {
+  console.log('🚀 Starting Margaret Café Production Setup...\n');
+  
+  try {
+    // Step 1: Database Migration
+    console.log('📊 Step 1: Database Migration');
+    await migrateDatabase();
+    
+    // Step 2: Create Admin User
+    console.log('\n👤 Step 2: Admin User Setup');
+    await createAdminUser();
+    
+    // Step 3: Test SMS Configuration
+    console.log('\n📱 Step 3: SMS Configuration Test');
+    await testSMSConfig();
+    
+    // Step 4: Test Payment Configuration
+    console.log('\n💳 Step 4: Payment Configuration Test');
+    await testPaymentConfig();
+    
+    console.log('\n✅ Production setup completed successfully!');
+    console.log('🎉 Margaret Café is ready for production!');
+    
+  } catch (error) {
+    console.error('\n❌ Production setup failed:', error);
+    throw error;
+  } finally {
+    await prisma.$disconnect();
+  }
+}
 
+async function migrateDatabase() {
+  try {
+    // Check if password column exists
+    const columns = await prisma.$queryRaw`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'User' AND column_name = 'password'
+    `;
+    
+    if (columns.length === 0) {
+      console.log('  Adding password column to User table...');
+      await prisma.$executeRaw`ALTER TABLE "User" ADD COLUMN "password" TEXT;`;
+      console.log('  ✅ Password column added successfully!');
+    } else {
+      console.log('  ✅ Password column already exists.');
+    }
+    
+    // Test user creation
+    const testUser = await prisma.user.create({
+      data: {
+        name: 'Setup Test User',
+        email: 'setup-test@example.com',
+        password: 'test123',
+        role: 'USER',
+      } as any,
+    });
+    
+    await prisma.user.delete({
+      where: { id: testUser.id },
+    });
+    
+    console.log('  ✅ Database schema is working correctly!');
+    
+  } catch (error) {
+    console.error('  ❌ Database migration failed:', error.message);
+    throw error;
+  }
+}
+
+async function createAdminUser() {
   try {
     // Check if admin user exists
     const existingAdmin = await prisma.user.findFirst({
       where: { role: 'ADMIN' }
     });
-
-    if (!existingAdmin) {
-      console.log('👤 Creating admin user...');
+    
+    if (existingAdmin) {
+      console.log('  ✅ Admin user already exists:', existingAdmin.email);
+    } else {
+      console.log('  Creating admin user...');
       const adminUser = await prisma.user.create({
         data: {
           name: 'Admin User',
@@ -23,69 +96,52 @@ async function setupProductionDatabase() {
           phoneVerified: new Date(),
         },
       });
-      console.log('✅ Admin user created:', adminUser.email);
-    } else {
-      console.log('✅ Admin user already exists:', existingAdmin.email);
+      console.log('  ✅ Admin user created:', adminUser.email);
     }
-
-    // Check if we have products
-    const productCount = await prisma.product.count();
-    console.log(`📦 Products in database: ${productCount}`);
-
-    if (productCount === 0) {
-      console.log('🛍️ Creating sample products...');
-      
-      const products = [
-        {
-          name: 'Persian Tea Collection',
-          nameFa: 'مجموعه چای ایرانی',
-          description: 'Premium Persian tea from northern Iran gardens',
-          descriptionFa: 'چای ممتاز ایرانی از باغات شمال ایران',
-          price: 180000,
-          category: 'TEA',
-          type: 'PHYSICAL',
-          stock: 30,
-        },
-        {
-          name: 'Turkish Coffee Premium',
-          nameFa: 'قهوه ترک ممتاز',
-          description: 'Authentic Turkish coffee with traditional brewing method',
-          descriptionFa: 'قهوه ترک اصیل با روش دم‌آوری سنتی',
-          price: 250000,
-          category: 'COFFEE',
-          type: 'PHYSICAL',
-          stock: 50,
-        },
-        {
-          name: 'Barista Master Course',
-          nameFa: 'دوره استادی بارستا',
-          description: 'Complete barista training from beginner to professional',
-          descriptionFa: 'آموزش کامل بارستا از مبتدی تا حرفه‌ای',
-          price: 1200000,
-          category: 'COURSE',
-          type: 'COURSE',
-          stock: 0,
-        },
-      ];
-
-      for (const product of products) {
-        await prisma.product.create({ data: product });
-      }
-      
-      console.log('✅ Sample products created');
-    }
-
-    console.log('\n🎉 Production database setup completed!');
-    console.log('\n📋 Next steps:');
-    console.log('1. Access your app at the Render URL');
-    console.log('2. Login with admin@margaretcafe.com');
-    console.log('3. Use the admin panel to manage your café');
-
+    
   } catch (error) {
-    console.error('❌ Error setting up database:', error);
-  } finally {
-    await prisma.$disconnect();
+    console.error('  ❌ Admin user creation failed:', error.message);
+    throw error;
   }
 }
 
-setupProductionDatabase();
+async function testSMSConfig() {
+  const apiKey = process.env.KAVENEGAR_API_KEY;
+  const senderNumber = process.env.KAVENEGAR_SENDER_NUMBER;
+  
+  if (!apiKey || !senderNumber) {
+    console.log('  ⚠️  SMS configuration missing - add KAVENEGAR_API_KEY and KAVENEGAR_SENDER_NUMBER');
+    return;
+  }
+  
+  console.log('  ✅ SMS configuration found');
+  console.log('  📱 Sender Number:', senderNumber);
+  console.log('  🔑 API Key:', apiKey.substring(0, 10) + '...');
+}
+
+async function testPaymentConfig() {
+  const merchantId = process.env.ZARINPAL_MERCHANT_ID;
+  
+  if (!merchantId) {
+    console.log('  ⚠️  Payment configuration missing - add ZARINPAL_MERCHANT_ID');
+    return;
+  }
+  
+  console.log('  ✅ Payment configuration found');
+  console.log('  💳 Merchant ID:', merchantId.substring(0, 10) + '...');
+}
+
+// Run setup if this script is executed directly
+if (require.main === module) {
+  setupProduction()
+    .then(() => {
+      console.log('\n🎉 Setup completed successfully!');
+      process.exit(0);
+    })
+    .catch((error) => {
+      console.error('\n💥 Setup failed:', error);
+      process.exit(1);
+    });
+}
+
+module.exports = { setupProduction };

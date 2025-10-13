@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppProps } from 'next/app';
 import { appWithTranslation } from 'next-i18next';
 import { SessionProvider } from 'next-auth/react';
@@ -6,6 +6,12 @@ import { Toaster } from 'react-hot-toast';
 import { CartProvider } from '@/contexts/CartContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+
+// Run startup check on client side
+if (typeof window === 'undefined') {
+  // Server side - run startup check
+  require('../scripts/startup-check');
+}
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
