@@ -18,20 +18,80 @@ const SignUp: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [authMethod, setAuthMethod] = useState<'email' | 'phone'>('email');
+  const [smsSent, setSmsSent] = useState(false);
+  const [smsCode, setSmsCode] = useState('');
+  const [isVerifyingSms, setIsVerifyingSms] = useState(false);
   
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-
-    if (password !== confirmPassword) {
-      setError('رمزهای عبور مطابقت ندارند');
-      setIsLoading(false);
+  const sendSmsCode = async () => {
+    if (!phone) {
+      setError('لطفاً شماره تلفن را وارد کنید');
       return;
     }
 
+    setIsVerifyingSms(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/auth/send-sms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSmsSent(true);
+        setError('');
+      } else {
+        setError(data.message || 'خطا در ارسال کد تأیید');
+      }
+    } catch (error) {
+      setError('خطا در برقراری ارتباط با سرور');
+    } finally {
+      setIsVerifyingSms(false);
+    }
+  };
+
+  const verifySmsCode = async () => {
+    if (!smsCode) {
+      setError('لطفاً کد تأیید را وارد کنید');
+      return;
+    }
+
+    setIsVerifyingSms(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/auth/verify-sms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone, code: smsCode }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setError('');
+        // SMS verified, now proceed with signup
+        await handleSignup();
+      } else {
+        setError(data.message || 'کد تأیید نامعتبر است');
+      }
+    } catch (error) {
+      setError('خطا در تأیید کد');
+    } finally {
+      setIsVerifyingSms(false);
+    }
+  };
+
+  const handleSignup = async () => {
     try {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
@@ -56,7 +116,35 @@ const SignUp: React.FC = () => {
       }
     } catch (error) {
       setError('خطا در برقراری ارتباط با سرور');
-    } finally {
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+
+    if (password !== confirmPassword) {
+      setError('رمزهای عبور مطابقت ندارند');
+      setIsLoading(false);
+      return;
+    }
+
+    if (authMethod === 'phone') {
+      if (!smsSent) {
+        // First step: send SMS code
+        await sendSmsCode();
+        setIsLoading(false);
+        return;
+      } else {
+        // Second step: verify SMS code
+        await verifySmsCode();
+        setIsLoading(false);
+        return;
+      }
+    } else {
+      // Email signup - direct signup
+      await handleSignup();
       setIsLoading(false);
     }
   };
@@ -163,8 +251,39 @@ const SignUp: React.FC = () => {
                     className="w-full pr-10 pl-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cafe-green focus:border-transparent"
                     placeholder="09123456789"
                     required
+                    disabled={smsSent}
                   />
                 </div>
+                
+                {smsSent && (
+                  <div className="mt-4">
+                    <label htmlFor="smsCode" className="block text-sm font-medium text-gray-700 mb-2">
+                      کد تأیید ارسال شده
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        id="smsCode"
+                        type="text"
+                        value={smsCode}
+                        onChange={(e) => setSmsCode(e.target.value)}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cafe-green focus:border-transparent"
+                        placeholder="کد 6 رقمی"
+                        maxLength={6}
+                      />
+                      <button
+                        type="button"
+                        onClick={sendSmsCode}
+                        disabled={isVerifyingSms}
+                        className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50"
+                      >
+                        ارسال مجدد
+                      </button>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">
+                      کد تأیید به شماره {phone} ارسال شد
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 
@@ -226,10 +345,21 @@ const SignUp: React.FC = () => {
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || isVerifyingSms}
               className="w-full bg-cafe-green text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'در حال ایجاد حساب...' : 'ایجاد حساب کاربری'}
+              {isLoading || isVerifyingSms 
+                ? (authMethod === 'phone' && !smsSent 
+                    ? 'در حال ارسال کد...' 
+                    : authMethod === 'phone' && smsSent 
+                    ? 'در حال تأیید کد...' 
+                    : 'در حال ایجاد حساب...')
+                : authMethod === 'phone' && !smsSent 
+                ? 'ارسال کد تأیید'
+                : authMethod === 'phone' && smsSent 
+                ? 'تأیید کد و ایجاد حساب'
+                : 'ایجاد حساب کاربری'
+              }
             </button>
           </form>
 
