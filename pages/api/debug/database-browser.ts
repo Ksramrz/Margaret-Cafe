@@ -48,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             description: true,
             price: true,
             category: true,
-            inStock: true,
+            stock: true,
             createdAt: true,
           },
           orderBy: { createdAt: 'desc' },
