@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         email: 'test@example.com',
         password: 'test123',
         role: 'USER',
-      },
+      } as any, // Type assertion to handle missing password field
     });
 
     // Clean up test user

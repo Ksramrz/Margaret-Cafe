@@ -54,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         phone: phone || null,
         password: hashedPassword, // Store hashed password
         role: 'USER', // Default role
-      },
+      } as any, // Type assertion to handle missing password field
       select: {
         id: true,
         name: true,
