@@ -28,11 +28,18 @@ export const sendVerificationCode = async (phone: string, code: string) => {
   return new Promise((resolve, reject) => {
     console.log(`Sending SMS to ${phone} with code ${code}`);
     
+    // Add timeout to prevent hanging
+    const timeout = setTimeout(() => {
+      reject(new Error('SMS request timeout'));
+    }, 30000); // 30 second timeout
+    
     api.Send({
       message: `کد تأیید شما: ${code}`,
       sender: process.env.KAVENEGAR_SENDER_NUMBER,
       receptor: phone,
     }, (response: any, status: number) => {
+      clearTimeout(timeout);
+      
       console.log('SMS Response:', response);
       console.log('SMS Status:', status);
       
