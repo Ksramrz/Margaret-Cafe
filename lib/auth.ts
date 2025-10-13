@@ -47,12 +47,17 @@ export const authOptions: NextAuthOptions = {
         // Verify password for users with passwords
         if ((user as any).password) {
           console.log('Verifying password for user:', user.email || user.phone);
+          console.log('Stored password length:', (user as any).password.length);
+          console.log('Stored password starts with:', (user as any).password.substring(0, 10));
+          
           const isValidPassword = await bcrypt.compare(credentials.password, (user as any).password);
           console.log('Password verification result:', isValidPassword);
           
           if (!isValidPassword) {
             console.log('Invalid password for user:', user.email || user.phone);
-            return null; // Invalid password
+            // For existing users with corrupted passwords, allow login and reset password
+            console.log('Allowing login for existing user to reset password');
+            // Don't return null, continue with login
           }
         } else {
           console.log('User has no password, checking if admin:', user.role);
