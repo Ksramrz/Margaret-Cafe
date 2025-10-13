@@ -71,6 +71,24 @@ const AdminPanel: React.FC = () => {
   ];
 
   const handleAddProduct = async () => {
+    // Client-side validation
+    if (!newProduct.name.trim()) {
+      alert('نام محصول (انگلیسی) الزامی است');
+      return;
+    }
+    if (!newProduct.nameFa.trim()) {
+      alert('نام محصول (فارسی) الزامی است');
+      return;
+    }
+    if (!newProduct.price || isNaN(parseFloat(newProduct.price))) {
+      alert('قیمت باید یک عدد معتبر باشد');
+      return;
+    }
+    if (!newProduct.category) {
+      alert('دسته‌بندی الزامی است');
+      return;
+    }
+    
     try {
       const response = await fetch('/api/admin/products', {
         method: 'POST',
@@ -112,7 +130,8 @@ const AdminPanel: React.FC = () => {
         }
       } else {
         const error = await response.json();
-        alert(`خطا در اضافه کردن محصول: ${error.message}`);
+        console.error('Product creation error:', error);
+        alert(`خطا در اضافه کردن محصول: ${error.message || 'خطای نامشخص'}`);
       }
     } catch (error) {
       console.error('Error adding product:', error);

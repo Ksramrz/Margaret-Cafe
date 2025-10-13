@@ -25,32 +25,75 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       try {
         const { name, nameFa, description, descriptionFa, price, category, type, image, stock, featured } = req.body;
         
+        // Validate required fields
+        if (!name || !nameFa || !price || !category) {
+          return res.status(400).json({ 
+            message: 'Missing required fields: name, nameFa, price, and category are required' 
+          });
+        }
+        
+        // Validate price and stock are numbers
+        const priceNum = parseInt(price);
+        const stockNum = parseInt(stock || '0');
+        
+        if (isNaN(priceNum) || priceNum < 0) {
+          return res.status(400).json({ 
+            message: 'Price must be a valid positive number' 
+          });
+        }
+        
+        if (isNaN(stockNum) || stockNum < 0) {
+          return res.status(400).json({ 
+            message: 'Stock must be a valid positive number' 
+          });
+        }
+        
         // Create product data object
         const productData: any = {
-          name,
-          nameFa,
-          description,
-          descriptionFa,
-          price: parseInt(price),
-          category,
+          name: name.trim(),
+          nameFa: nameFa.trim(),
+          description: description?.trim() || '',
+          descriptionFa: descriptionFa?.trim() || '',
+          price: priceNum,
+          category: category.trim(),
           type: type || 'PHYSICAL',
-          image,
-          stock: parseInt(stock),
+          image: image?.trim() || '',
+          stock: stockNum,
         };
         
         // Only add featured if it exists in the database
         if (featured !== undefined) {
-          productData.featured = featured;
+          productData.featured = Boolean(featured);
         }
+        
+        console.log('Creating product with data:', productData);
         
         const product = await prisma.product.create({
           data: productData,
         });
         
+        console.log('Product created successfully:', product.id);
         return res.status(201).json(product);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error creating product:', error);
-        return res.status(500).json({ message: 'Error creating product' });
+        
+        // Handle specific Prisma errors
+        if (error.code === 'P2002') {
+          return res.status(400).json({ 
+            message: 'A product with this name already exists' 
+          });
+        }
+        
+        if (error.code === 'P2025') {
+          return res.status(400).json({ 
+            message: 'Invalid category or type specified' 
+          });
+        }
+        
+        return res.status(500).json({ 
+          message: 'Error creating product',
+          error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
       }
 
     case 'PUT':
