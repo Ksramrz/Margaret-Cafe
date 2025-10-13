@@ -10,6 +10,7 @@ const AdminPanel: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [logoUrl, setLogoUrl] = useState('');
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -115,6 +116,19 @@ const AdminPanel: React.FC = () => {
       console.error('Error adding product:', error);
       alert('خطا در اضافه کردن محصول');
     }
+  };
+
+  const handleSaveLogo = () => {
+    if (logoUrl) {
+      localStorage.setItem('siteLogo', logoUrl);
+      alert('لوگو با موفقیت ذخیره شد!');
+    }
+  };
+
+  const handleClearLogo = () => {
+    setLogoUrl('');
+    localStorage.removeItem('siteLogo');
+    alert('لوگو پاک شد!');
   };
 
   const renderContent = () => {
