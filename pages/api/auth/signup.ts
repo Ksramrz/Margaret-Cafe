@@ -69,8 +69,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       message: 'حساب کاربری با موفقیت ایجاد شد',
       user,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Signup error:', error);
-    return res.status(500).json({ message: 'خطا در ایجاد حساب کاربری' });
+    
+    // Handle specific database errors
+    if (error.code === 'P2002') {
+      return res.status(400).json({ message: 'کاربری با این اطلاعات قبلاً ثبت نام کرده است' });
+    }
+    
+    if (error.message?.includes('password')) {
+      return res.status(400).json({ message: 'خطا در رمزگذاری رمز عبور' });
+    }
+    
+    return res.status(500).json({ 
+      message: 'خطا در ایجاد حساب کاربری',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 }

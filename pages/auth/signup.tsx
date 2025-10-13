@@ -85,6 +85,7 @@ const SignUp: React.FC = () => {
         setError(data.message || 'کد تأیید نامعتبر است');
       }
     } catch (error) {
+      console.error('SMS verification error:', error);
       setError('خطا در تأیید کد');
     } finally {
       setIsVerifyingSms(false);
