@@ -13,6 +13,7 @@ const AdminPanel: React.FC = () => {
   const [logoUrl, setLogoUrl] = useState('');
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [newProduct, setNewProduct] = useState({
     name: '',
     nameFa: '',
@@ -228,6 +229,24 @@ const AdminPanel: React.FC = () => {
     alert('لوگو پاک شد!');
   };
 
+  const handleImageUpload = async (file: File) => {
+    setUploadingImage(true);
+    try {
+      // Convert file to base64 for now (in production, use a proper image service)
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setNewProduct({...newProduct, image: result});
+        setUploadingImage(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('خطا در آپلود تصویر');
+      setUploadingImage(false);
+    }
+  };
+
   const renderContent = () => {
     if (loading) {
       return (
@@ -303,7 +322,7 @@ const AdminPanel: React.FC = () => {
               <h1 className="text-4xl font-bold text-gray-900">مدیریت محصولات</h1>
               <button 
                 onClick={() => setShowAddProductModal(true)}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center font-medium shadow-md hover:shadow-lg"
               >
                 <Plus className="w-4 h-4 ml-2" />
                 افزودن محصول
@@ -396,10 +415,10 @@ const AdminPanel: React.FC = () => {
 
             {/* Add Product Modal */}
             {showAddProductModal && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-gray-900">
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div className="bg-white rounded-xl p-8 w-full max-w-4xl max-h-[95vh] overflow-y-auto shadow-2xl">
+                  <div className="flex justify-between items-center mb-8 border-b border-gray-200 pb-4">
+                    <h2 className="text-3xl font-bold text-gray-900">
                       {editingProduct ? 'ویرایش محصول' : 'افزودن محصول جدید'}
                     </h2>
                     <button
@@ -424,119 +443,186 @@ const AdminPanel: React.FC = () => {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        نام محصول (انگلیسی)
-                      </label>
-                      <input
-                        type="text"
-                        value={newProduct.name}
-                        onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="Product Name"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        نام محصول (فارسی)
-                      </label>
-                      <input
-                        type="text"
-                        value={newProduct.nameFa}
-                        onChange={(e) => setNewProduct({...newProduct, nameFa: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="نام محصول"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        قیمت (تومان)
-                      </label>
-                      <input
-                        type="number"
-                        value={newProduct.price}
-                        onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="0"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        دسته‌بندی
-                      </label>
-                      <select
-                        value={newProduct.category}
-                        onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                      >
-                        <option value="">انتخاب دسته‌بندی</option>
-                        <option value="coffee">قهوه</option>
-                        <option value="tea">چای</option>
-                        <option value="dessert">دسر</option>
-                        <option value="snack">تنقلات</option>
-                        <option value="beverage">نوشیدنی</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        موجودی
-                      </label>
-                      <input
-                        type="number"
-                        value={newProduct.stock}
-                        onChange={(e) => setNewProduct({...newProduct, stock: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="0"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        آدرس تصویر
-                      </label>
-                      <input
-                        type="url"
-                        value={newProduct.image}
-                        onChange={(e) => setNewProduct({...newProduct, image: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="https://example.com/image.jpg"
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        توضیحات (فارسی)
-                      </label>
-                      <textarea
-                        value={newProduct.descriptionFa}
-                        onChange={(e) => setNewProduct({...newProduct, descriptionFa: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        rows={3}
-                        placeholder="توضیحات محصول"
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="flex items-center">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          نام محصول (انگلیسی)
+                        </label>
                         <input
-                          type="checkbox"
-                          checked={newProduct.featured}
-                          onChange={(e) => setNewProduct({...newProduct, featured: e.target.checked})}
-                          className="ml-2"
+                          type="text"
+                          value={newProduct.name}
+                          onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="Product Name"
                         />
-                        <span className="text-sm font-medium text-gray-700">
-                          محصول ویژه (نمایش در صفحه اصلی)
-                        </span>
-                      </label>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          نام محصول (فارسی)
+                        </label>
+                        <input
+                          type="text"
+                          value={newProduct.nameFa}
+                          onChange={(e) => setNewProduct({...newProduct, nameFa: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="نام محصول"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          قیمت (تومان)
+                        </label>
+                        <input
+                          type="number"
+                          value={newProduct.price}
+                          onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="0"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          دسته‌بندی
+                        </label>
+                        <select
+                          value={newProduct.category}
+                          onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                          <option value="">انتخاب دسته‌بندی</option>
+                          <option value="coffee">قهوه</option>
+                          <option value="tea">چای</option>
+                          <option value="dessert">دسر</option>
+                          <option value="snack">تنقلات</option>
+                          <option value="beverage">نوشیدنی</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          موجودی
+                        </label>
+                        <input
+                          type="number"
+                          value={newProduct.stock}
+                          onChange={(e) => setNewProduct({...newProduct, stock: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          تصویر محصول
+                        </label>
+                        <div className="space-y-4">
+                          {/* File Upload */}
+                          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  handleImageUpload(file);
+                                }
+                              }}
+                              className="hidden"
+                              id="image-upload"
+                            />
+                            <label
+                              htmlFor="image-upload"
+                              className="cursor-pointer flex flex-col items-center"
+                            >
+                              <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                              <span className="text-sm text-gray-600">
+                                {uploadingImage ? 'در حال آپلود...' : 'کلیک کنید تا تصویر را آپلود کنید'}
+                              </span>
+                              <span className="text-xs text-gray-500 mt-1">
+                                PNG, JPG تا 5MB
+                              </span>
+                            </label>
+                          </div>
+                          
+                          {/* Image Preview */}
+                          {newProduct.image && (
+                            <div className="mt-4">
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                پیش‌نمایش تصویر:
+                              </label>
+                              <div className="border border-gray-300 rounded-lg p-4 bg-gray-50">
+                                <img
+                                  src={newProduct.image}
+                                  alt="Product Preview"
+                                  className="max-h-32 object-contain mx-auto"
+                                  onError={() => alert('خطا در بارگذاری تصویر')}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => setNewProduct({...newProduct, image: ''})}
+                                  className="mt-2 text-red-600 text-sm hover:text-red-800"
+                                >
+                                  حذف تصویر
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Alternative URL Input */}
+                          <div className="text-center text-gray-500 text-sm">
+                            یا
+                          </div>
+                          <input
+                            type="url"
+                            value={newProduct.image}
+                            onChange={(e) => setNewProduct({...newProduct, image: e.target.value})}
+                            placeholder="https://example.com/image.jpg"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          توضیحات (فارسی)
+                        </label>
+                        <textarea
+                          value={newProduct.descriptionFa}
+                          onChange={(e) => setNewProduct({...newProduct, descriptionFa: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          rows={4}
+                          placeholder="توضیحات محصول"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="flex items-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={newProduct.featured}
+                            onChange={(e) => setNewProduct({...newProduct, featured: e.target.checked})}
+                            className="ml-3 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <div>
+                            <span className="text-sm font-medium text-gray-700">
+                              محصول ویژه
+                            </span>
+                            <p className="text-xs text-gray-500 mt-1">
+                              این محصول در صفحه اصلی نمایش داده می‌شود
+                            </p>
+                          </div>
+                        </label>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex justify-end space-x-4 mt-6">
+                  <div className="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
                     <button
                       onClick={() => {
                         setShowAddProductModal(false);
@@ -553,13 +639,13 @@ const AdminPanel: React.FC = () => {
                           featured: false
                         });
                       }}
-                      className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+                      className="px-6 py-3 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                     >
                       انصراف
                     </button>
                     <button
                       onClick={editingProduct ? handleUpdateProduct : handleAddProduct}
-                      className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                      className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-md hover:shadow-lg"
                     >
                       {editingProduct ? 'به‌روزرسانی محصول' : 'افزودن محصول'}
                     </button>
