@@ -83,7 +83,7 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, setIsOpen }) => {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-6">
                 <Link
                   href="/auth/signin"
                   className="text-gray-700 hover:text-cafe-green transition-colors duration-200 font-medium"
@@ -92,7 +92,7 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, setIsOpen }) => {
                 </Link>
                 <Link
                   href="/auth/signup"
-                  className="bg-cafe-green text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium"
+                  className="bg-cafe-green text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium"
                 >
                   ثبت نام
                 </Link>
