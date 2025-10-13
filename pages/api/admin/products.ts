@@ -25,19 +25,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       try {
         const { name, nameFa, description, descriptionFa, price, category, type, image, stock, featured } = req.body;
         
+        // Create product data object
+        const productData: any = {
+          name,
+          nameFa,
+          description,
+          descriptionFa,
+          price: parseInt(price),
+          category,
+          type: type || 'PHYSICAL',
+          image,
+          stock: parseInt(stock),
+        };
+        
+        // Only add featured if it exists in the database
+        if (featured !== undefined) {
+          productData.featured = featured;
+        }
+        
         const product = await prisma.product.create({
-          data: {
-            name,
-            nameFa,
-            description,
-            descriptionFa,
-            price: parseInt(price),
-            category,
-            type: type || 'PHYSICAL',
-            image,
-            stock: parseInt(stock),
-            featured: featured || false,
-          },
+          data: productData,
         });
         
         return res.status(201).json(product);
@@ -50,17 +57,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       try {
         const { id, ...updateData } = req.body;
         
+        // Prepare update data
+        const updateFields: any = {
+          ...updateData,
+          price: updateData.price ? parseInt(updateData.price) : undefined,
+          stock: updateData.stock ? parseInt(updateData.stock) : undefined,
+        };
+        
+        // Only update featured if it's provided
+        if (updateData.featured !== undefined) {
+          updateFields.featured = updateData.featured;
+        }
+        
         const product = await prisma.product.update({
           where: { id },
-          data: {
-            ...updateData,
-            price: updateData.price ? parseInt(updateData.price) : undefined,
-            stock: updateData.stock ? parseInt(updateData.stock) : undefined,
-          },
+          data: updateFields,
         });
         
         return res.status(200).json(product);
       } catch (error) {
+        console.error('Error updating product:', error);
         return res.status(500).json({ message: 'Error updating product' });
       }
 
