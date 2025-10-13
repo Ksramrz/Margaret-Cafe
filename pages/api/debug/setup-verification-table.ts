@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public' AND table_name = 'VerificationCode'
-    `;
+    ` as Array<{ table_name: string }>;
     
     if (tables.length === 0) {
       console.log('Creating VerificationCode table...');
