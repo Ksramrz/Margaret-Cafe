@@ -202,9 +202,7 @@ const ShopPage: React.FC = () => {
                         <div className="text-xl font-bold text-cafe-green">
                           {product.price.toLocaleString()} تومان
                         </div>
-                        <div className="text-sm text-gray-500">
-                          موجودی: {product.stock}
-                        </div>
+                        {/* Stock count intentionally hidden from UI */}
                       </div>
 
                       <button
