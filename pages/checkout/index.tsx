@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { useCart } from '@/contexts/CartContext';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { CreditCard, ShoppingCart, User, MapPin, Phone, Mail, ArrowRight, CheckCircle } from 'lucide-react';
+import { CreditCard, ShoppingCart, User, MapPin, Phone, Mail, ArrowRight, CheckCircle, Minus, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 const CheckoutPage: React.FC = () => {
