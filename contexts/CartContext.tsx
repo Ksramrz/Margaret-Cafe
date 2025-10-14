@@ -6,9 +6,9 @@ export interface CartItem {
   description: string;
   price: number;
   currency: string;
-  category: 'digital' | 'physical' | 'course';
-  type: 'ebook' | 'journal' | 'wallpaper' | 'coffee' | 'mug' | 'tea' | 'course';
-  images: string[];
+  category: string; // relaxed to generic string to support DB categories
+  type: string; // relaxed to generic string to support DB types
+  images: string[]; // normalized list of image URLs
   rating: number;
   reviews: number;
   isNew?: boolean;
@@ -107,9 +107,18 @@ function cartReducer(state: CartState, action: CartAction): CartState {
   }
 }
 
+// Minimal input required when adding an item to the cart
+export interface CartAddItemInput {
+  id: string;
+  name: string;
+  price: number;
+  image?: string; // single image
+  images?: string[]; // or multiple images
+}
+
 interface CartContextType {
   state: CartState;
-  addItem: (item: Omit<CartItem, 'quantity'>) => void;
+  addItem: (item: CartAddItemInput) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
@@ -148,8 +157,24 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('cart', JSON.stringify(state.items));
   }, [state.items, isClient]);
 
-  const addItem = (item: Omit<CartItem, 'quantity'>) => {
-    dispatch({ type: 'ADD_ITEM', payload: item as CartItem });
+  const addItem = (item: CartAddItemInput) => {
+    // Normalize incoming item into full CartItem shape (without quantity)
+    const normalizedItem: Omit<CartItem, 'quantity'> = {
+      id: item.id,
+      name: item.name,
+      description: '',
+      price: item.price,
+      currency: 'IRR',
+      category: 'physical',
+      type: 'product',
+      images: item.images && item.images.length > 0 ? item.images : (item.image ? [item.image] : []),
+      rating: 0,
+      reviews: 0,
+      isNew: false,
+      isBestSeller: false,
+    };
+
+    dispatch({ type: 'ADD_ITEM', payload: normalizedItem as CartItem });
   };
 
   const removeItem = (id: string) => {
