@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -14,14 +14,12 @@ interface FeatureCardProps {
 }
 
 interface ProductCardProps {
+  id: string;
   title: string;
   description: string;
-  price: string;
+  price: number;
   image: string;
-  rating: number;
-  reviews: number;
-  isNew?: boolean;
-  isPopular?: boolean;
+  featured: boolean;
   delay: number;
 }
 
@@ -51,7 +49,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon: Icon, title, descriptio
   );
 };
 
-const ProductCard: React.FC<ProductCardProps> = ({ title, description, price, image, rating, reviews, isNew, isPopular, delay }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ id, title, description, price, image, featured, delay }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -61,16 +59,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ title, description, price, im
     >
       <div className="relative">
         <div className="aspect-w-16 aspect-h-12 h-48 bg-gray-100 flex items-center justify-center">
-          <div className="w-full h-full bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center">
-            <Coffee className="w-16 h-16 text-primary-300" />
-          </div>
+          <img
+            src={image || '/images/placeholder-product.jpg'}
+            alt={title}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.src = '/images/placeholder-product.jpg';
+            }}
+          />
         </div>
-        {isNew && (
-          <div className="absolute top-4 left-4 bg-primary-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-            جدید
-          </div>
-        )}
-        {isPopular && (
+        {featured && (
           <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
             <Heart className="w-3 h-3 mr-1" />
             پرفروش
@@ -85,12 +83,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ title, description, price, im
               <Star
                 key={i}
                 className={`w-4 h-4 ${
-                  i < Math.floor(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                  i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'
                 }`}
               />
             ))}
           </div>
-          <span className="text-sm text-gray-500">({reviews})</span>
+          <span className="text-sm text-gray-500">(4.5)</span>
         </div>
 
         <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
@@ -103,11 +101,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ title, description, price, im
 
         <div className="flex items-center justify-between">
           <div className="text-xl font-bold text-cafe-green">
-            {price}
+            {price.toLocaleString()} تومان
           </div>
-          <button className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium">
-            افزودن به سبد
-          </button>
+          <Link href="/shop" className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium">
+            مشاهده
+          </Link>
         </div>
       </div>
     </motion.div>
@@ -116,6 +114,37 @@ const ProductCard: React.FC<ProductCardProps> = ({ title, description, price, im
 
 const HeroSection: React.FC = () => {
   const { t } = useTranslation('common');
+  const [featuredProducts, setFeaturedProducts] = useState<ProductCardProps[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch featured products from database
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const response = await fetch('/api/products?featured=true');
+        if (response.ok) {
+          const products = await response.json();
+          // Take only first 3 featured products
+          const featured = products.slice(0, 3).map((product: any, index: number) => ({
+            id: product.id,
+            title: product.name,
+            description: product.description,
+            price: product.price,
+            image: product.image,
+            featured: product.featured,
+            delay: index * 0.1
+          }));
+          setFeaturedProducts(featured);
+        }
+      } catch (error) {
+        console.error('Error fetching featured products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, []);
 
   const features = [
     {
@@ -135,36 +164,6 @@ const HeroSection: React.FC = () => {
       title: 'انجمن قهوه‌دوستان',
       description: 'ارتباط با علاقه‌مندان قهوه و چای از سراسر جهان',
       href: '/community',
-    },
-  ];
-
-  const featuredProducts = [
-    {
-      title: 'قهوه ترک اصیل',
-      description: 'قهوه آسیاب شده با روش سنتی ترکیه، طعمی منحصر به فرد و عالی',
-      price: '۲۵۰,۰۰۰ تومان',
-      image: '/images/products/turkish-coffee.jpg',
-      rating: 4.9,
-      reviews: 89,
-      isPopular: true,
-    },
-    {
-      title: 'چای ایرانی ممتاز',
-      description: 'چای برگ کامل از باغات شمال ایران، عطر و طعم بی‌نظیر',
-      price: '۱۸۰,۰۰۰ تومان',
-      image: '/images/products/persian-tea.jpg',
-      rating: 4.8,
-      reviews: 156,
-      isNew: true,
-    },
-    {
-      title: 'دوره بارستا حرفه‌ای',
-      description: 'آموزش کامل هنر بارستا از مبتدی تا پیشرفته با گواهینامه',
-      price: '۱,۲۰۰,۰۰۰ تومان',
-      image: '/images/products/barista-course.jpg',
-      rating: 4.9,
-      reviews: 45,
-      isPopular: true,
     },
   ];
 
@@ -242,10 +241,10 @@ const HeroSection: React.FC = () => {
                   <Coffee className="w-12 h-12 lg:w-16 lg:h-16 text-primary-600" />
                 </div>
                 <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">محصول ویژه هفته</h3>
-                <p className="text-gray-600 mb-6 text-sm lg:text-base">قهوه ترک اصیل با تخفیف ویژه</p>
+                <p className="text-gray-600 mb-6 text-sm lg:text-base">بهترین محصولات کافه مارگارت</p>
                 <div className="bg-white rounded-lg p-4 mb-4">
-                  <div className="text-2xl font-bold text-cafe-green mb-1">۲۵۰,۰۰۰ تومان</div>
-                  <div className="text-sm text-gray-500 line-through">۳۰۰,۰۰۰ تومان</div>
+                  <div className="text-2xl font-bold text-cafe-green mb-1">محصولات ویژه</div>
+                  <div className="text-sm text-gray-500">از فروشگاه ما</div>
                 </div>
                 <Link href="/shop" className="inline-flex items-center bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg transition-colors font-medium">
                   خرید کنید
@@ -308,28 +307,48 @@ const HeroSection: React.FC = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {featuredProducts.map((product, index) => (
-              <ProductCard
-                key={product.title}
-                title={product.title}
-                description={product.description}
-                price={product.price}
-                image={product.image}
-                rating={product.rating}
-                reviews={product.reviews}
-                isNew={product.isNew}
-                isPopular={product.isPopular}
-                delay={index * 0.1}
-              />
-            ))}
-          </div>
+          {loading ? (
+            <div className="text-center py-16">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cafe-green mx-auto mb-4"></div>
+              <p className="text-gray-600">در حال بارگذاری محصولات ویژه...</p>
+            </div>
+          ) : featuredProducts.length === 0 ? (
+            <div className="text-center py-16">
+              <Coffee className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                محصول ویژه‌ای موجود نیست
+              </h3>
+              <p className="text-gray-600 mb-6">
+                در حال حاضر محصول ویژه‌ای برای نمایش وجود ندارد
+              </p>
+              <Link href="/shop" className="btn-primary">
+                مشاهده همه محصولات
+              </Link>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                {featuredProducts.map((product, index) => (
+                  <ProductCard
+                    key={product.id}
+                    id={product.id}
+                    title={product.title}
+                    description={product.description}
+                    price={product.price}
+                    image={product.image}
+                    featured={product.featured}
+                    delay={index * 0.1}
+                  />
+                ))}
+              </div>
 
-          <div className="text-center">
-            <Link href="/shop" className="btn-primary text-lg px-8 py-4">
-              مشاهده همه محصولات
-            </Link>
-          </div>
+              <div className="text-center">
+                <Link href="/shop" className="btn-primary text-lg px-8 py-4">
+                  مشاهده همه محصولات
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </section>
     </div>
