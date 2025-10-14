@@ -11,7 +11,7 @@ import Link from 'next/link';
 
 const CheckoutPage: React.FC = () => {
   const { t } = useTranslation('common');
-  const { state: cart, clearCart } = useCart();
+  const { state: cart, clearCart, updateQuantity, removeItem } = useCart();
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -328,13 +328,41 @@ const CheckoutPage: React.FC = () => {
                   <div key={item.id} className="flex items-center justify-between py-3 border-b border-gray-200">
                     <div className="flex items-center gap-3">
                       <img
-                        src={item.images[0]}
+                        src={item.images[0] || '/images/placeholder-product.jpg'}
                         alt={item.name}
                         className="w-16 h-16 object-cover rounded-lg"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src = '/images/placeholder-product.jpg';
+                        }}
                       />
                       <div>
                         <h3 className="font-medium text-gray-900">{item.name}</h3>
-                        <p className="text-sm text-gray-500">تعداد: {item.quantity}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                            className="w-7 h-7 rounded border text-gray-600 hover:bg-gray-100 flex items-center justify-center"
+                            aria-label="decrement"
+                          >
+                            <Minus className="w-4 h-4" />
+                          </button>
+                          <span className="w-10 text-center text-sm">{item.quantity}</span>
+                          <button
+                            type="button"
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            className="w-7 h-7 rounded border text-gray-600 hover:bg-gray-100 flex items-center justify-center"
+                            aria-label="increment"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeItem(item.id)}
+                            className="ml-3 text-red-600 hover:text-red-700 text-sm"
+                          >
+                            حذف
+                          </button>
+                        </div>
                       </div>
                     </div>
                     <div className="text-right">

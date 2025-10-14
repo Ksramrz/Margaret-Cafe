@@ -29,7 +29,9 @@ const ShopPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const { state: cart, addItem, removeItem, updateQuantity } = useCart();
+  const { state: cart, addItem } = useCart();
+  const [addedProductName, setAddedProductName] = useState<string>('');
+  const [showAddedModal, setShowAddedModal] = useState<boolean>(false);
 
   // Fetch products from database
   useEffect(() => {
@@ -73,6 +75,12 @@ const ShopPage: React.FC = () => {
       price: product.price,
       image: product.image,
     });
+
+    // Show quick confirmation modal
+    setAddedProductName(product.name);
+    setShowAddedModal(true);
+    // Auto-hide after 2.5s
+    setTimeout(() => setShowAddedModal(false), 2500);
   };
 
   return (
@@ -218,6 +226,34 @@ const ShopPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Added to Cart Modal / Toast */}
+      {showAddedModal && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+          <div className="bg-white shadow-2xl border border-gray-200 rounded-xl px-5 py-4 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-cafe-green text-white flex items-center justify-center">
+              <ShoppingCart className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="font-semibold text-gray-900">به سبد اضافه شد</div>
+              <div className="text-sm text-gray-600">{addedProductName}</div>
+            </div>
+            <Link
+              href="/checkout"
+              className="ml-2 bg-cafe-green text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"
+            >
+              ادامه پرداخت
+            </Link>
+            <button
+              onClick={() => setShowAddedModal(false)}
+              className="text-gray-400 hover:text-gray-600"
+              aria-label="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
