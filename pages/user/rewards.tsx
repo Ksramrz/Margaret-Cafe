@@ -2,14 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
-import {
-  Gift,
-  Coins,
-  Sparkles,
-  CheckCircle,
-  Clock,
-  XCircle,
-} from 'lucide-react';
+import { Coffee, Gift, Receipt, Sparkles } from 'lucide-react';
 
 interface Reward {
   id: string;
@@ -51,7 +44,6 @@ const RewardsPage: React.FC = () => {
       router.push('/auth/signin');
       return;
     }
-
     if (status === 'authenticated') {
       fetchData();
     }
@@ -86,15 +78,13 @@ const RewardsPage: React.FC = () => {
     try {
       const response = await fetch('/api/user/redeem-reward', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rewardId }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        alert(`موفقیت! کد کوپن شما: ${data.couponCode}`);
+        alert(`✅ موفق! کد شما: ${data.couponCode}\n\nاین کد رو هنگام پرداخت وارد کنید تا تخفیف اعمال بشه!`);
         await fetchData();
       } else {
         const error = await response.json();
@@ -108,188 +98,127 @@ const RewardsPage: React.FC = () => {
     }
   };
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'DISCOUNT':
-        return '🎫';
-      case 'PRODUCT':
-        return '📦';
-      case 'ACCESS':
-        return '🎓';
-      case 'SUBSCRIPTION':
-        return '⭐';
-      default:
-        return '🎁';
-    }
-  };
-
-  const getTypeName = (type: string) => {
-    switch (type) {
-      case 'DISCOUNT':
-        return 'تخفیف';
-      case 'PRODUCT':
-        return 'محصول رایگان';
-      case 'ACCESS':
-        return 'دسترسی ویژه';
-      case 'SUBSCRIPTION':
-        return 'اشتراک';
-      default:
-        return 'جایزه';
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    if (status === 'ACTIVE') {
-      return <CheckCircle className="w-5 h-5 text-green-500" />;
-    } else if (status === 'USED') {
-      return <XCircle className="w-5 h-5 text-gray-400" />;
-    } else {
-      return <Clock className="w-5 h-5 text-orange-500" />;
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    if (status === 'ACTIVE') return 'فعال';
-    if (status === 'USED') return 'استفاده شده';
-    return 'منقضی شده';
-  };
-
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-cafe-cream">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cafe-green"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-cafe-cream py-8">
       <div className="container-custom max-w-6xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">فروشگاه جوایز</h1>
-          <p className="text-gray-600 flex items-center">
-            <Coins className="w-5 h-5 ml-2 text-yellow-600" />
-            <span className="font-bold text-2xl text-yellow-600">{userCoins.toLocaleString()}</span>
-            <span className="mr-2">سکه موجود شما</span>
-          </p>
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            فروشگاه جوایز ☕
+          </h1>
+          <div className="flex items-center justify-center text-2xl">
+            <Coffee className="w-8 h-8 ml-3 text-amber-600" />
+            <span className="font-bold text-amber-600">{userCoins.toLocaleString()}</span>
+            <span className="mr-3 text-gray-600">فنجان داری</span>
+          </div>
         </div>
 
-        {/* Available Rewards */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
-            <Gift className="w-6 h-6 ml-2 text-cafe-green" />
-            جوایز موجود
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {rewards.map((reward) => (
-              <motion.div
-                key={reward.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all"
-              >
-                <div className="text-center mb-4">
-                  <div className="text-5xl mb-3">{getTypeIcon(reward.type)}</div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{reward.name}</h3>
-                  <p className="text-gray-600 text-sm mb-2">{reward.description}</p>
-                  <div className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs">
-                    {getTypeName(reward.type)}
-                  </div>
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          {rewards.map((reward) => (
+            <motion.div
+              key={reward.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all border-2 border-gray-100 hover:border-amber-200"
+            >
+              <div className="text-5xl mb-4 text-center">
+                {reward.type === 'DISCOUNT' && '🎫'}
+                {reward.type === 'PRODUCT' && '📦'}
+                {reward.type === 'ACCESS' && '🎓'}
+                {!['DISCOUNT', 'PRODUCT', 'ACCESS'].includes(reward.type) && '🎁'}
+              </div>
+              
+              <h3 className="text-xl font-bold text-gray-900 mb-2 text-center">{reward.name}</h3>
+              <p className="text-gray-600 text-sm mb-4 text-center">{reward.description}</p>
+
+              <div className="border-t pt-4 space-y-4">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">قیمت:</span>
+                  <span className="font-bold text-2xl text-amber-600">
+                    <Coffee className="w-5 h-5 inline ml-1" />
+                    {reward.coinsCost}
+                  </span>
                 </div>
 
-                <div className="border-t pt-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600">قیمت:</span>
-                    <span className="font-bold text-2xl text-yellow-600">
-                      {reward.coinsCost} سکه
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={() => handleRedeem(reward.id)}
-                    disabled={!reward.canAfford || !reward.userCanRedeem || redeemingId === reward.id}
-                    className={`w-full py-3 rounded-lg font-bold transition-colors ${
-                      reward.canAfford && reward.userCanRedeem
-                        ? 'bg-cafe-green text-white hover:bg-green-700'
-                        : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    }`}
-                  >
-                    {redeemingId === reward.id
-                      ? 'در حال خرید...'
-                      : reward.canAfford
-                      ? 'خرید'
-                      : 'سکه کافی نیست'}
-                  </button>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                <button
+                  onClick={() => handleRedeem(reward.id)}
+                  disabled={!reward.canAfford || !reward.userCanRedeem || redeemingId === reward.id}
+                  className={`w-full py-3 rounded-xl font-bold transition-all ${
+                    reward.canAfford && reward.userCanRedeem
+                      ? 'bg-amber-500 text-white hover:bg-amber-600 shadow-lg hover:scale-105'
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  {redeemingId === reward.id
+                    ? 'در حال خرید...'
+                    : reward.canAfford
+                    ? 'خرید'
+                    : 'فنجان کافی نیست ☕'}
+                </button>
+              </div>
+            </motion.div>
+          ))}
 
           {rewards.length === 0 && (
-            <div className="text-center py-16 bg-white rounded-xl shadow-lg">
+            <div className="col-span-3 text-center py-16 bg-white rounded-2xl">
               <Gift className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-600">در حال حاضر جایزه‌ای موجود نیست</p>
+              <p className="text-gray-600 text-lg">در حال حاضر جایزه‌ای موجود نیست</p>
+              <p className="text-gray-500 mt-2">به زودی جوایز جدیدی اضافه می‌شوند!</p>
             </div>
           )}
         </div>
 
-        {/* User Redemptions */}
-        <div>
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
-            <Sparkles className="w-6 h-6 ml-2 text-cafe-green" />
-            کدهای کوپن من
-          </h2>
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-            {redemptions.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-gray-700">کد کوپن</th>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-gray-700">جایزه</th>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-gray-700">وضعیت</th>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-gray-700">تاریخ</th>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-gray-700">انقضا</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {redemptions.map((redemption) => (
-                      <tr key={redemption.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 font-mono font-bold text-gray-900">
-                          {redemption.couponCode}
-                        </td>
-                        <td className="px-6 py-4 text-gray-600">{redemption.reward.name}</td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center">
-                            {getStatusIcon(redemption.status)}
-                            <span className="mr-2">{getStatusText(redemption.status)}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-gray-600">
-                          {new Date(redemption.createdAt).toLocaleDateString('fa-IR')}
-                        </td>
-                        <td className="px-6 py-4 text-gray-600">
-                          {redemption.expiresAt
-                            ? new Date(redemption.expiresAt).toLocaleDateString('fa-IR')
-                            : '-'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="text-center py-12 text-gray-600">
-                هنوز جایزه‌ای خریداری نکرده‌اید
-              </div>
-            )}
+        {redemptions.length > 0 && (
+          <div className="bg-white rounded-2xl p-6 shadow-lg">
+            <h2 className="text-2xl font-bold mb-4 flex items-center">
+              <Receipt className="w-6 h-6 ml-2 text-cafe-green" />
+              کدهای کوپن من
+            </h2>
+            <div className="space-y-3">
+              {redemptions.map((redemption) => (
+                <div
+                  key={redemption.id}
+                  className="bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-xl border border-amber-200"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-mono font-bold text-lg text-gray-900 mb-1">
+                        {redemption.couponCode}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {redemption.reward.name}
+                      </div>
+                    </div>
+                    <div className="text-left">
+                      <div className={`text-sm font-medium ${
+                        redemption.status === 'ACTIVE' ? 'text-green-600' : 
+                        redemption.status === 'USED' ? 'text-gray-400' : 'text-orange-600'
+                      }`}>
+                        {redemption.status === 'ACTIVE' ? 'فعال ✓' :
+                         redemption.status === 'USED' ? 'استفاده شده' : 'منقضی شده'}
+                      </div>
+                      {redemption.expiresAt && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          تا {new Date(redemption.expiresAt).toLocaleDateString('fa-IR')}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 };
 
 export default RewardsPage;
-
