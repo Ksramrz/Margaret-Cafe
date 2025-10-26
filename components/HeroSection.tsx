@@ -152,6 +152,44 @@ const HeroSection: React.FC = () => {
         </div>
       </section>
 
+      {/* Loyalty Program Section */}
+      <section className="py-12 bg-gradient-to-br from-amber-50 to-orange-50">
+        <div className="container-custom">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">برنامه وفاداری ☕</h2>
+            <p className="text-lg text-gray-600">هر روز بیایید، فنجان رایگان بگیرید!</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            <Link href="/user/dashboard" className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all text-center group border-2 border-transparent hover:border-amber-200">
+              <div className="text-5xl mb-3">☕</div>
+              <h3 className="text-xl font-bold mb-2">فنجان‌های من</h3>
+              <p className="text-gray-600 text-sm mb-4">هر خرید و فعالیت = فنجان رایگان!</p>
+              <button className="bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-amber-600 transition">
+                ورود به داشبورد
+              </button>
+            </Link>
+
+            <Link href="/leaderboard" className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all text-center group border-2 border-transparent hover:border-amber-200">
+              <div className="text-5xl mb-3">🏆</div>
+              <h3 className="text-xl font-bold mb-2">رده‌بندی</h3>
+              <p className="text-gray-600 text-sm mb-4">مسابقه برای جایزه هفتگی رایگان</p>
+              <button className="bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-amber-600 transition">
+                مشاهده رتبه‌ها
+              </button>
+            </Link>
+
+            <Link href="/user/rewards" className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all text-center group border-2 border-transparent hover:border-amber-200">
+              <div className="text-5xl mb-3">🎁</div>
+              <h3 className="text-xl font-bold mb-2">جوایز</h3>
+              <p className="text-gray-600 text-sm mb-4">فنجان‌های خود را خرج کنید</p>
+              <button className="bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-amber-600 transition">
+                مشاهده جوایز
+              </button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Featured Products Section */}
       {featuredProducts.length > 0 && (
         <section className="py-12 bg-gray-50">

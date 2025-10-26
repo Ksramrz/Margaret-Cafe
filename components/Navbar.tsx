@@ -29,6 +29,11 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, setIsOpen }) => {
     { name: t('common.contact'), href: '/contact' },
   ];
 
+  const authenticatedNavigation = [
+    { name: 'رده‌بندی', href: '/leaderboard', icon: '🏆' },
+    { name: 'جوایز', href: '/user/rewards', icon: '🎁' },
+  ];
+
   const changeLanguage = (locale: string) => {
     router.push(router.pathname, router.asPath, { locale });
   };
@@ -58,6 +63,22 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, setIsOpen }) => {
                 {item.name}
               </Link>
             ))}
+            
+            {/* Authenticated User Navigation */}
+            {session && (
+              <>
+                {authenticatedNavigation.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="text-gray-700 hover:text-cafe-green transition-colors duration-200 font-medium"
+                  >
+                    <span className="ml-1">{item.icon}</span>
+                    {item.name}
+                  </Link>
+                ))}
+              </>
+            )}
             
             {/* Authentication */}
             {session ? (
@@ -158,6 +179,23 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, setIsOpen }) => {
                   {item.name}
                 </Link>
               ))}
+              
+              {/* Authenticated User Navigation in Mobile */}
+              {session && (
+                <>
+                  {authenticatedNavigation.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="block px-4 py-2 text-gray-700 hover:text-cafe-green hover:bg-gray-50 transition-colors duration-200"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <span className="ml-2">{item.icon}</span>
+                      {item.name}
+                    </Link>
+                  ))}
+                </>
+              )}
               
               {/* Mobile Authentication */}
               <div className="border-t border-gray-200 pt-4 mt-4">
