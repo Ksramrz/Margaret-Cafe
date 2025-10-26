@@ -50,12 +50,24 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts Account[]
-  sessions Session[]
-  orders   Order[]
-  blogPosts BlogPost[]
-  courses  Course[]
-  enrollments CourseEnrollment[]
+  // Coin system fields
+  totalCoins          Int      @default(0)
+  currentStreak       Int      @default(0)
+  longestStreak       Int      @default(0)
+  lastLoginReward     DateTime?
+  level               Int      @default(1)
+  totalPoints         Int      @default(0)
+
+  accounts      Account[]
+  sessions      Session[]
+  orders        Order[]
+  blogPosts     BlogPost[]
+  courses       Course[]
+  enrollments   CourseEnrollment[]
+  coinTransactions CoinTransaction[]
+  userBadges    UserBadge[]
+  achievements  UserAchievement[]
+  couponRedemptions CouponRedemption[]
 }
 
 model VerificationToken {
@@ -190,4 +202,112 @@ model VerificationCode {
   createdAt DateTime @default(now())
 
   @@map("verification_codes")
+}
+
+// Coin system models
+model CoinTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // EARNED, REDEEMED
+  amount      Int
+  source      String   // DAILY_LOGIN, PURCHASE, COURSE_COMPLETE, REFERRAL, ADMIN_GIFT
+  description String?
+  metadata    String?  // JSON for additional info
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  name        String
+  nameFa      String
+  description String
+  descriptionFa String
+  icon        String   // Icon name or URL
+  category    String   // MILESTONE, ACHIEVEMENT, SPECIAL
+  pointsRequired Int    @default(0)
+  createdAt   DateTime @default(now())
+
+  userBadges UserBadge[]
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  earnedAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  name        String
+  nameFa      String
+  description String
+  descriptionFa String
+  coinsReward Int      @default(0)
+  pointsReward Int     @default(0)
+  icon        String
+  category    String   // PURCHASE, COURSE, ENGAGEMENT
+  createdAt   DateTime @default(now())
+
+  userAchievements UserAchievement[]
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+}
+
+model Reward {
+  id          String   @id @default(cuid())
+  name        String
+  nameFa      String
+  description String
+  descriptionFa String
+  coinsCost   Int
+  type        String   // DISCOUNT, PRODUCT, ACCESS, SUBSCRIPTION
+  value       String   // JSON with discount percentage, product ID, etc.
+  image       String?
+  isActive    Boolean  @default(true)
+  maxRedemptions Int?   // Limit number of redemptions (null = unlimited)
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  couponRedemptions CouponRedemption[]
+}
+
+model CouponRedemption {
+  id          String   @id @default(cuid())
+  userId      String
+  rewardId    String
+  couponCode  String   @unique
+  status      String   @default("ACTIVE") // ACTIVE, USED, EXPIRED
+  usedAt      DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reward Reward @relation(fields: [rewardId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([couponCode])
 }

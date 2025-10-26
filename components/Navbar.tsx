@@ -70,10 +70,13 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, setIsOpen }) => {
                     پنل مدیریت
                   </Link>
                 )}
-                <div className="flex items-center space-x-2">
-                  <User className="w-4 h-4 text-gray-600" />
-                  <span className="text-sm text-gray-600">{session.user?.name}</span>
-                </div>
+                <Link
+                  href="/user/dashboard"
+                  className="text-gray-700 hover:text-cafe-green transition-colors duration-200 font-medium flex items-center space-x-2"
+                >
+                  <User className="w-4 h-4" />
+                  <span>{session.user?.name}</span>
+                </Link>
                 <button
                   onClick={() => signOut()}
                   className="flex items-center space-x-1 text-gray-600 hover:text-red-600 transition-colors"
