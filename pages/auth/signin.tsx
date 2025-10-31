@@ -3,7 +3,6 @@ import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { motion } from 'framer-motion';
 import { Mail, Phone, Lock, Eye, EyeOff, Coffee } from 'lucide-react';
 import Link from 'next/link';
 
@@ -227,15 +226,15 @@ const SignIn: React.FC = () => {
           </div>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-cafe-charcoal-light">
               حساب کاربری ندارید؟{' '}
-              <Link href="/auth/signup" className="text-cafe-green hover:text-green-700 font-medium">
+              <Link href="/auth/signup" className="text-cafe-green hover:text-cafe-green-dark font-medium">
                 ثبت نام کنید
               </Link>
             </p>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   );
 };
