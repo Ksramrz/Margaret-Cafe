@@ -6,6 +6,15 @@ import { Toaster } from 'react-hot-toast';
 import { CartProvider } from '@/contexts/CartContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import PageTransition from '@/components/PageTransition';
+import CustomCursor from '@/components/CustomCursor';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+// Register GSAP plugins
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 // Run startup check on client side
 if (typeof window === 'undefined') {
@@ -16,15 +25,25 @@ if (typeof window === 'undefined') {
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  useEffect(() => {
+    // Enable smooth scrolling with CSS
+    if (typeof window !== 'undefined') {
+      document.documentElement.style.scrollBehavior = 'smooth';
+    }
+  }, []);
+
   return (
     <SessionProvider session={session}>
       <CartProvider>
+        <CustomCursor />
         <div className="min-h-screen flex flex-col">
-          <Navbar isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
-          <main className="flex-1">
-            <Component {...pageProps} />
-          </main>
-          <Footer />
+            <Navbar isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
+            <main className="flex-1">
+              <PageTransition>
+                <Component {...pageProps} />
+              </PageTransition>
+            </main>
+            <Footer />
           <Toaster
             position="top-right"
             toastOptions={{
@@ -32,6 +51,8 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
               style: {
                 background: '#363636',
                 color: '#fff',
+                borderRadius: '12px',
+                padding: '16px',
               },
             }}
           />

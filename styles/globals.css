@@ -8,6 +8,7 @@
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;
+    scroll-behavior: smooth;
   }
   
   html[lang="fa"] {
@@ -17,6 +18,16 @@
   
   body {
     @apply bg-cafe-cream text-gray-900;
+    overflow-x: hidden;
+  }
+  
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  .page-transition-container {
+    will-change: transform, opacity;
   }
 }
 
