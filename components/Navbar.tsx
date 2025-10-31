@@ -29,17 +29,14 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, setIsOpen }) => {
     { name: t('common.contact'), href: '/contact' },
   ];
 
-  const authenticatedNavigation = [
-    { name: 'رده‌بندی', href: '/leaderboard', icon: '🏆' },
-    { name: 'جوایز', href: '/user/rewards', icon: '🎁' },
-  ];
+  // Removed leaderboard and rewards
 
   const changeLanguage = (locale: string) => {
     router.push(router.pathname, router.asPath, { locale });
   };
 
   return (
-    <nav className="bg-white/95 backdrop-blur-md shadow-cafe sticky top-0 z-50 border-b border-gray-100">
+    <nav className="bg-white sticky top-0 z-50 border-b border-gray-200 shadow-sm">
       <div className="container-custom">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
@@ -64,22 +61,6 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, setIsOpen }) => {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cafe-green group-hover:w-full transition-all duration-300"></span>
               </Link>
             ))}
-            
-            {/* Authenticated User Navigation */}
-            {session && (
-              <>
-                {authenticatedNavigation.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="text-gray-700 hover:text-cafe-green transition-colors duration-200 font-medium"
-                  >
-                    <span className="ml-1">{item.icon}</span>
-                    {item.name}
-                  </Link>
-                ))}
-              </>
-            )}
             
             {/* Authentication */}
             {session ? (
@@ -180,23 +161,6 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, setIsOpen }) => {
                   {item.name}
                 </Link>
               ))}
-              
-              {/* Authenticated User Navigation in Mobile */}
-              {session && (
-                <>
-                  {authenticatedNavigation.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="block px-4 py-2 text-gray-700 hover:text-cafe-green hover:bg-gray-50 transition-colors duration-200"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <span className="ml-2">{item.icon}</span>
-                      {item.name}
-                    </Link>
-                  ))}
-                </>
-              )}
               
               {/* Mobile Authentication */}
               <div className="border-t border-gray-200 pt-4 mt-4">

@@ -203,18 +203,18 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cafe-cream flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full space-y-8"
-      >
+    <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900">ایجاد حساب کاربری</h2>
-          <p className="mt-2 text-gray-600">به خانواده کافه مارگارت بپیوندید</p>
+          <div className="inline-flex items-center gap-2 bg-cafe-green/10 text-cafe-green px-5 py-2 rounded-full text-sm font-semibold mb-4">
+            <Coffee className="w-4 h-4" />
+            <span>کافه مارگارت</span>
+          </div>
+          <h2 className="text-4xl font-bold text-cafe-charcoal mb-3">ایجاد حساب کاربری</h2>
+          <p className="text-lg text-cafe-charcoal-light">به خانواده کافه مارگارت بپیوندید</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
           {/* Auth Method Toggle */}
           <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
             <button

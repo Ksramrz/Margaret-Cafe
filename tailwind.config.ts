@@ -22,17 +22,23 @@ const config: Config = {
           900: '#14532d',
         },
         cafe: {
-          green: '#2d501e',
-          'green-dark': '#1f3615',
-          'green-light': '#3d6b2d',
-          light: '#f7f5f2',
-          cream: '#faf9f6',
-          brown: '#6b4423',
-          'brown-light': '#8b6f47',
-          amber: '#d97706',
-          'amber-light': '#fbbf24',
-          beige: '#f5f1eb',
-          'beige-dark': '#e8e3db',
+          // Modern café palette with better contrast
+          green: '#1a4d1a',          // Rich dark green (better contrast)
+          'green-dark': '#0d2e0d',  // Deeper green
+          'green-light': '#2d7a2d',  // Lighter green
+          light: '#f8f6f4',          // Very light beige
+          cream: '#ffffff',          // Pure white background
+          brown: '#8b6914',          // Warm brown
+          'brown-light': '#a68b2a',  // Light brown
+          amber: '#c97706',          // Rich amber
+          'amber-light': '#e5a02e',  // Light amber
+          beige: '#f5f3f0',         // Clean beige
+          'beige-dark': '#e8e5e0',   // Darker beige
+          // New modern colors
+          charcoal: '#2c2c2c',       // Dark text
+          'charcoal-light': '#4a4a4a', // Medium text
+          surface: '#ffffff',        // White surface
+          'surface-light': '#fafafa', // Light surface
         }
       },
       fontFamily: {
