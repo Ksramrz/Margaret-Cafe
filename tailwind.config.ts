@@ -22,10 +22,17 @@ const config: Config = {
           900: '#14532d',
         },
         cafe: {
-          green: '#2d5a27',
-          light: '#f0f8f0',
-          cream: '#faf9f7',
-          brown: '#8b4513',
+          green: '#2d501e',
+          'green-dark': '#1f3615',
+          'green-light': '#3d6b2d',
+          light: '#f7f5f2',
+          cream: '#faf9f6',
+          brown: '#6b4423',
+          'brown-light': '#8b6f47',
+          amber: '#d97706',
+          'amber-light': '#fbbf24',
+          beige: '#f5f1eb',
+          'beige-dark': '#e8e3db',
         }
       },
       fontFamily: {
@@ -37,6 +44,9 @@ const config: Config = {
         'slide-up': 'slideUp 0.5s ease-out',
         'bounce-slow': 'bounce 2s infinite',
         'pulse-slow': 'pulse 3s infinite',
+        'float': 'float 3s ease-in-out infinite',
+        'steam': 'steam 4s ease-in-out infinite',
+        'coffee-shine': 'coffeeShine 2s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -47,6 +57,23 @@ const config: Config = {
           '0%': { transform: 'translateY(20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        steam: {
+          '0%, 100%': { transform: 'translateY(0) scale(1)', opacity: '0.7' },
+          '50%': { transform: 'translateY(-15px) scale(1.1)', opacity: '1' },
+        },
+        coffeeShine: {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
+      },
+      boxShadow: {
+        'cafe': '0 4px 14px 0 rgba(45, 80, 30, 0.15)',
+        'cafe-lg': '0 10px 30px 0 rgba(45, 80, 30, 0.2)',
+        'cafe-xl': '0 20px 50px 0 rgba(45, 80, 30, 0.25)',
       },
     },
   },

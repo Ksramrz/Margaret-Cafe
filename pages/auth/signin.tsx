@@ -4,7 +4,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
-import { Mail, Phone, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Phone, Lock, Eye, EyeOff, Coffee } from 'lucide-react';
 import Link from 'next/link';
 
 const SignIn: React.FC = () => {
@@ -73,18 +73,34 @@ const SignIn: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cafe-cream flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen cafe-bg-gradient cafe-pattern flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <div className="absolute top-20 right-10 w-64 h-64 bg-cafe-green/5 rounded-full blur-3xl animate-pulse-slow"></div>
+      <div className="absolute bottom-20 left-10 w-64 h-64 bg-amber-200/20 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
+      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full space-y-8"
+        className="max-w-md w-full space-y-8 relative z-10"
       >
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900">ورود به حساب کاربری</h2>
-          <p className="mt-2 text-gray-600">به کافه مارگارت خوش آمدید</p>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center"
+        >
+          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm text-cafe-green px-5 py-2 rounded-full text-sm font-medium shadow-cafe mb-4">
+            <Coffee className="w-4 h-4" />
+            <span>کافه مارگارت</span>
+          </div>
+          <h2 className="text-4xl font-bold text-gray-900 mb-3 cafe-text-shadow">ورود به حساب کاربری</h2>
+          <p className="text-lg text-gray-600">به کافه مارگارت خوش آمدید ☕</p>
+        </motion.div>
 
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-cafe-xl p-8 border-2 border-gray-100"
+        >
           {/* Auth Method Toggle */}
           <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
             <button
@@ -190,9 +206,14 @@ const SignIn: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-cafe-green text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full btn-primary py-3.5 px-4 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'در حال ورود...' : 'ورود'}
+              {isLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                  در حال ورود...
+                </span>
+              ) : 'ورود'}
             </button>
           </form>
 

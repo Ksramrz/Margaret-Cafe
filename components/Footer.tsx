@@ -37,25 +37,26 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-cafe-green text-white">
-      <div className="container-custom section-padding">
+    <footer className="bg-gradient-to-br from-cafe-green via-cafe-green-light to-cafe-green-dark text-white relative overflow-hidden">
+      <div className="absolute inset-0 cafe-pattern opacity-10"></div>
+      <div className="container-custom section-padding relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="lg:col-span-1">
             <Link href="/" className="mb-4 inline-block">
               <Logo size="sm" showText={true} textColor="text-white" />
             </Link>
-            <p className="text-green-200 mb-4">
-              A café in Iran, a community worldwide. Experience authentic Persian hospitality and global café culture.
+            <p className="text-green-100 mb-6 leading-relaxed">
+              کافه‌ای در ایران، جامعه‌ای در سراسر جهان. تجربه مهمان‌نوازی اصیل ایرانی و فرهنگ کافه جهانی.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-3">
               {socialLinks.map((social) => (
                 <motion.a
                   key={social.name}
                   href={social.href}
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.9 }}
-                  className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+                  className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center hover:bg-white/20 transition-all border border-white/10 hover:border-white/20 shadow-lg"
                 >
                   <social.icon className="w-5 h-5" />
                 </motion.a>
@@ -116,9 +117,9 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-green-600 mt-12 pt-8 text-center">
-          <p className="text-green-200">
-            © 2024 Margaret Café. All rights reserved. Made with ❤️ in Iran.
+        <div className="border-t border-white/20 mt-12 pt-8 text-center">
+          <p className="text-green-100 text-lg">
+            © ۱۴۰۴ کافه مارگارت. تمامی حقوق محفوظ است. Made with ❤️ in Iran.
           </p>
         </div>
       </div>

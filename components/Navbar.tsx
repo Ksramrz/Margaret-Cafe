@@ -39,7 +39,7 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, setIsOpen }) => {
   };
 
   return (
-    <nav className="bg-white shadow-lg sticky top-0 z-50">
+    <nav className="bg-white/95 backdrop-blur-md shadow-cafe sticky top-0 z-50 border-b border-gray-100">
       <div className="container-custom">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
@@ -58,9 +58,10 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, setIsOpen }) => {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-gray-700 hover:text-cafe-green transition-colors duration-200 font-medium"
+                className="text-gray-700 hover:text-cafe-green transition-all duration-300 font-medium px-3 py-2 rounded-lg hover:bg-cafe-cream relative group"
               >
                 {item.name}
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cafe-green group-hover:w-full transition-all duration-300"></span>
               </Link>
             ))}
             
@@ -116,7 +117,7 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, setIsOpen }) => {
                 </Link>
                 <Link
                   href="/auth/signup"
-                  className="bg-cafe-green text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium"
+                  className="btn-primary px-6 py-2.5 font-medium"
                 >
                   ثبت نام
                 </Link>
@@ -129,11 +130,11 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, setIsOpen }) => {
             {/* Cart Icon */}
             <Link
               href="/checkout"
-              className="relative p-2 rounded-md text-gray-600 hover:text-cafe-green hover:bg-gray-100 transition-colors"
+              className="relative p-2.5 rounded-xl text-gray-600 hover:text-cafe-green hover:bg-cafe-cream transition-all duration-300 group"
             >
-              <ShoppingCart className="w-5 h-5" />
+              <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform" />
               {cart.itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold shadow-lg animate-pulse">
                   {cart.itemCount}
                 </span>
               )}
@@ -236,7 +237,7 @@ const Navbar: React.FC<NavbarProps> = ({ isOpen, setIsOpen }) => {
                     </Link>
                     <Link
                       href="/auth/signup"
-                      className="block px-4 py-2 bg-cafe-green text-white rounded-lg hover:bg-green-700 transition-colors duration-200 text-center"
+                      className="block px-4 py-3 btn-primary text-center"
                       onClick={() => setIsOpen(false)}
                     >
                       ثبت نام
