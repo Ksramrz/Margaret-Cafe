@@ -9,6 +9,7 @@ import Footer from '@/components/Footer';
 import PageTransition from '@/components/PageTransition';
 import CustomCursor from '@/components/CustomCursor';
 import ParticleBackground from '@/components/ParticleBackground';
+import { useRouter } from 'next/router';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -25,9 +26,12 @@ if (typeof window === 'undefined') {
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
+  
+  // Hide navbar on 3D café page (homepage)
+  const isHomePage = router.pathname === '/';
 
   useEffect(() => {
-    // Enable smooth scrolling with CSS
     if (typeof window !== 'undefined') {
       document.documentElement.style.scrollBehavior = 'smooth';
     }
@@ -36,15 +40,15 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <SessionProvider session={session}>
       <CartProvider>
-        <ParticleBackground />
+        {!isHomePage && <ParticleBackground />}
         <div className="min-h-screen flex flex-col relative z-10">
-            <Navbar isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
-            <main className="flex-1 pt-16">
+            {!isHomePage && <Navbar isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />}
+            <main className={isHomePage ? "flex-1" : "flex-1 pt-16"}>
               <PageTransition>
                 <Component {...pageProps} />
               </PageTransition>
             </main>
-            <Footer />
+            {!isHomePage && <Footer />}
           <Toaster
             position="top-right"
             toastOptions={{
