@@ -250,7 +250,7 @@ const SignIn: React.FC = () => {
               </Link>
             </p>
           </div>
-        </div>
+        </motion.div>
       </motion.div>
     </div>
   );
