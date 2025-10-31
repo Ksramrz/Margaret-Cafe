@@ -8,6 +8,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PageTransition from '@/components/PageTransition';
 import CustomCursor from '@/components/CustomCursor';
+import ParticleBackground from '@/components/ParticleBackground';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -35,11 +36,10 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <SessionProvider session={session}>
       <CartProvider>
-        {/* Temporarily disable custom cursor - can cause issues */}
-        {/* <CustomCursor /> */}
-        <div className="min-h-screen flex flex-col">
+        <ParticleBackground />
+        <div className="min-h-screen flex flex-col relative z-10">
             <Navbar isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
-            <main className="flex-1">
+            <main className="flex-1 pt-16">
               <PageTransition>
                 <Component {...pageProps} />
               </PageTransition>
@@ -50,10 +50,12 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
             toastOptions={{
               duration: 4000,
               style: {
-                background: '#363636',
-                color: '#fff',
+                background: '#1a1a1a',
+                color: '#00ff88',
                 borderRadius: '12px',
                 padding: '16px',
+                border: '1px solid rgba(0, 255, 136, 0.3)',
+                boxShadow: '0 0 20px rgba(0, 255, 136, 0.3)',
               },
             }}
           />
