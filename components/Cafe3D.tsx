@@ -169,7 +169,7 @@ const CoffeeCup = React.memo(({ position, steaming = false }: any) => {
     }
   });
 
-  const steamPositions = useMemo(() => [
+  const steamPositions = useMemo((): [number, number, number][] => [
     [-0.03, 0.25, 0],
     [0.03, 0.4, 0],
     [0, 0.55, 0]

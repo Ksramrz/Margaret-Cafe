@@ -90,13 +90,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
       // Award coins and points
+      const userCoins = (user as any).totalCoins || 0;
+      const userPoints = (user as any).totalPoints || 0;
       await prisma.user.update({
         where: { id: userId },
         data: {
-          totalCoins: user.totalCoins + coinsReward,
-          totalPoints: user.totalPoints + pointsReward,
+          totalCoins: { increment: coinsReward },
+          totalPoints: { increment: pointsReward },
         },
-      });
+      } as any);
 
       // Create transaction
       await prisma.coinTransaction.create({
