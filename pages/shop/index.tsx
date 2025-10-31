@@ -139,29 +139,28 @@ const ShopPage: React.FC = () => {
     }
   }, [loading]);
 
-  // Product grid animations
+  // Product grid animations - ensure cards are visible
   useGSAP(() => {
     if (!productsGridRef.current || loading) return;
 
     const productCards = productsGridRef.current.querySelectorAll('.product-card');
     
+    // Ensure all cards are visible first
+    productCards.forEach((card) => {
+      gsap.set(card, { opacity: 1, y: 0, rotationY: 0, scale: 1 });
+    });
+    
+    // Then add subtle entrance animation
     productCards.forEach((card, index) => {
-      gsap.fromTo(card, {
-        opacity: 0,
-        y: 60,
-        rotationY: 10,
-        scale: 0.9,
-      }, {
-        opacity: 1,
-        y: 0,
-        rotationY: 0,
-        scale: 1,
-        duration: 0.8,
-        delay: index * 0.1,
-        ease: 'power3.out',
+      gsap.from(card, {
+        opacity: 0.5,
+        y: 20,
+        duration: 0.6,
+        delay: index * 0.05,
+        ease: 'power2.out',
         scrollTrigger: {
           trigger: card as Element,
-          start: 'top 85%',
+          start: 'top 90%',
           toggleActions: 'play none none none',
         },
       });

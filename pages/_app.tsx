@@ -35,7 +35,8 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <SessionProvider session={session}>
       <CartProvider>
-        <CustomCursor />
+        {/* Temporarily disable custom cursor - can cause issues */}
+        {/* <CustomCursor /> */}
         <div className="min-h-screen flex flex-col">
             <Navbar isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
             <main className="flex-1">

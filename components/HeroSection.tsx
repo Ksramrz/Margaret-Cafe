@@ -55,131 +55,55 @@ const HeroSection: React.FC = () => {
     fetchFeaturedProducts();
   }, []);
 
-  // GSAP Animations
+  // GSAP Animations - Simplified to ensure content is visible
   useGSAP(() => {
     if (!heroRef.current) return;
 
-    // Hero text animation
+    // Ensure all elements are visible from the start
     if (titleRef.current) {
+      gsap.set(titleRef.current.children, { opacity: 1, y: 0, rotationX: 0 });
+      // Gentle fade in animation
       gsap.fromTo(
         titleRef.current.children,
-        {
-          opacity: 0,
-          y: 80,
-          rotationX: -90,
-        },
+        { opacity: 0.3 },
         {
           opacity: 1,
-          y: 0,
-          rotationX: 0,
-          duration: 1,
-          stagger: 0.1,
-          ease: 'power3.out',
+          duration: 0.8,
+          stagger: 0.05,
+          ease: 'power2.out',
+        }
+      );
+    }
+
+    if (subtitleRef.current) {
+      gsap.set(subtitleRef.current, { opacity: 1, y: 0 });
+      gsap.fromTo(
+        subtitleRef.current,
+        { opacity: 0.5 },
+        {
+          opacity: 1,
+          duration: 0.6,
+          ease: 'power2.out',
           delay: 0.3,
         }
       );
     }
 
-    // Subtitle animation
-    if (subtitleRef.current) {
-      gsap.fromTo(
-        subtitleRef.current,
-        {
-          opacity: 0,
-          y: 40,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: 'power2.out',
-          delay: 0.8,
-        }
-      );
-    }
-
-    // Badge animation
     if (badgeRef.current) {
-      gsap.fromTo(
-        badgeRef.current,
-        {
-          opacity: 0,
-          scale: 0.8,
-          y: -20,
-        },
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 0.6,
-          ease: 'back.out(1.7)',
-          delay: 0.2,
-        }
-      );
+      gsap.set(badgeRef.current, { opacity: 1, scale: 1, y: 0 });
     }
 
-    // CTA buttons animation
     if (ctaRef.current) {
-      gsap.fromTo(
-        ctaRef.current.children,
-        {
-          opacity: 0,
-          y: 30,
-          scale: 0.9,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: 'back.out(1.7)',
-          delay: 1.2,
-        }
-      );
+      gsap.set(ctaRef.current.children, { opacity: 1, y: 0, scale: 1 });
     }
 
-    // Product card animation
     if (productRef.current) {
-      gsap.fromTo(
-        productRef.current,
-        {
-          opacity: 0,
-          scale: 0.8,
-          rotationY: -15,
-        },
-        {
-          opacity: 1,
-          scale: 1,
-          rotationY: 0,
-          duration: 1.2,
-          ease: 'power3.out',
-          delay: 0.5,
-        }
-      );
+      gsap.set(productRef.current, { opacity: 1, scale: 1, rotationY: 0 });
     }
 
-    // Stats animation
+    // Stats animation - ensure visible
     gsap.utils.toArray('.stat-item').forEach((stat: any) => {
-      gsap.fromTo(
-        stat,
-        {
-          opacity: 0,
-          scale: 0,
-        },
-        {
-          opacity: 1,
-          scale: 1,
-          duration: 0.6,
-          ease: 'back.out(1.7)',
-          delay: 1.5,
-          scrollTrigger: {
-            trigger: stat,
-            start: 'top 90%',
-            toggleActions: 'play none none none',
-          },
-        }
-      );
+      gsap.set(stat, { opacity: 1, scale: 1 });
     });
 
     // Floating decorative elements
