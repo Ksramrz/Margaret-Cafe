@@ -39,6 +39,19 @@ const ShopPage: React.FC = () => {
   const productsGridRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLDivElement>(null);
 
+  const categories = [
+    { id: 'all', name: 'همه محصولات', icon: '☕' },
+    { id: 'coffee', name: 'قهوه', icon: '☕' },
+    { id: 'tea', name: 'چای', icon: '🫖' },
+    { id: 'dessert', name: 'دسر', icon: '🍰' },
+    { id: 'snack', name: 'تنقلات', icon: '🥜' },
+    { id: 'beverage', name: 'نوشیدنی', icon: '🥤' },
+  ];
+
+  const filteredProducts = selectedCategory === 'all' 
+    ? products 
+    : products.filter(product => product.category === selectedCategory);
+
   // Fetch products from database
   useEffect(() => {
     const fetchProducts = async () => {
@@ -154,19 +167,6 @@ const ShopPage: React.FC = () => {
       });
     });
   }, [filteredProducts, loading]);
-
-  const categories = [
-    { id: 'all', name: 'همه محصولات', icon: '☕' },
-    { id: 'coffee', name: 'قهوه', icon: '☕' },
-    { id: 'tea', name: 'چای', icon: '🫖' },
-    { id: 'dessert', name: 'دسر', icon: '🍰' },
-    { id: 'snack', name: 'تنقلات', icon: '🥜' },
-    { id: 'beverage', name: 'نوشیدنی', icon: '🥤' },
-  ];
-
-  const filteredProducts = selectedCategory === 'all' 
-    ? products 
-    : products.filter(product => product.category === selectedCategory);
 
   const handleAddToCart = (product: Product) => {
     addItem({
