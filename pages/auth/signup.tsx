@@ -4,7 +4,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
-import { Mail, Phone, Lock, Eye, EyeOff, User } from 'lucide-react';
+import { Mail, Phone, Lock, Eye, EyeOff, User, Coffee } from 'lucide-react';
 import Link from 'next/link';
 
 const SignUp: React.FC = () => {
@@ -453,7 +453,7 @@ const SignUp: React.FC = () => {
             </p>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
